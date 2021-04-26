@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Blogger</string>
+    <string name="enter_description_text">Enter description here</string>
+    <string name="post_button_text">Done</string>
+    <string name="post_image_descr">post image</string>
+    <string name="defualt_date_text">Jan 20, 2018</string>
+    <string name="username_text">Username</string>
+    <string name="user_profile_pic_descr">post author profile image</string>
+    <string name="google_login_descr">image buttton to login via google</string>
+    <string name="or_separator_text">OR</string>
+    <string name="dont_have_acc_text">No account yet? Create one</string>
+    <string name="login_text">Login</string>
+    <string name="login_password_text">Password</string>
+    <string name="login_email_text">Email</string>
+    <string name="blogger_text">Blogger</string>
+    <string name="reg_welcome_text">welcome</string>
+    <string name="splash_blogger_text">Blogger</string>
+    <string name="splash_version_text">Version 1.0.0 (2021)</string>
+    <string name="splash_developer_text">Developed by whiz</string>
+    <string name="post_likes_text">120</string>
+    <string name="post_comments_text">150</string>
+    <string name="close_image_text">imageview to logout the current loggedin user</string>
+    <string name="profile_image_text">imageview to view current user profile</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
