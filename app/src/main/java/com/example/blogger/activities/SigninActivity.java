@@ -17,7 +17,9 @@ import android.widget.Toast;
 import com.example.blogger.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,9 +28,9 @@ public class SigninActivity extends AppCompatActivity {
 
     private TextInputLayout email_txt, password_txt;
 
-    private Button login_button;
+    private MaterialButton login_button;
     private ImageButton google_icon;
-    private TextView signup_tv,blogger_tv;
+    private MaterialTextView signup_tv,blogger_tv;
 
     //firebase objects
     private FirebaseAuth auth;
@@ -69,10 +71,10 @@ public class SigninActivity extends AppCompatActivity {
         email_txt = (TextInputLayout)findViewById(R.id.signin_email);
         password_txt = (TextInputLayout)findViewById(R.id.signin_password);
         //buttons
-        login_button = (Button) findViewById(R.id.btn_login);
+        login_button = (MaterialButton) findViewById(R.id.btn_login);
         google_icon = (ImageButton)findViewById(R.id.google_signin);
-        signup_tv = (TextView) findViewById(R.id.link_signup);
-        blogger_tv = (TextView)findViewById(R.id.blogger_text);
+        signup_tv = (MaterialTextView) findViewById(R.id.link_signup);
+        blogger_tv = (MaterialTextView)findViewById(R.id.blogger_text);
 
         //try animation
         animateComponents();
@@ -205,31 +207,5 @@ public class SigninActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    @Override
-    protected void onStart()
-    {
-        super.onStart();
-
-        user =  FirebaseAuth.getInstance().getCurrentUser();
-        String userId = FirebaseAuth.getInstance().getUid();
-
-        if (user != null )
-        {
-            try
-            {
-
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                finish();
-
-            }catch (Exception e)
-            {
-                Toast.makeText(getApplicationContext(), ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }else
-        {
-            Toast.makeText(getApplicationContext(),"Please login or sign up...!", Toast.LENGTH_LONG).show();
-        }
     }
 }

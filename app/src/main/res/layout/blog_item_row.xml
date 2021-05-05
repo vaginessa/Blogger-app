@@ -28,21 +28,21 @@
 
             <ImageView
                 android:id="@+id/blog_like"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/blogDescription"
-                app:srcCompat="@drawable/image_like_gray"
-                android:contentDescription="TODO" />
+                app:srcCompat="@drawable/action_like_btn_gray"
+                tools:ignore="ContentDescription" />
 
             <ImageView
                 android:id="@+id/blog_comment"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginStart="232dp"
                 android:layout_marginTop="8dp"
@@ -51,7 +51,8 @@
                 app:layout_constraintTop_toBottomOf="@+id/blogDescription"
                 app:layout_constraintVertical_bias="1.0"
                 app:srcCompat="@drawable/ic_comment"
-                android:tint="@color/slate_gray"/>
+                app:tint="@color/slate_gray"
+                tools:ignore="ContentDescription" />
 
             <!--<ImageView
                 android:id="@+id/commentProfilePic"
@@ -75,27 +76,35 @@
                 app:civ_border_width="2dp"
                 app:civ_border_color="@color/white" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/commentUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="16dp"
-                android:text="Username"
+                android:text="@string/username_row_text"
                 android:textColor="#2a2929"
-                android:textStyle="normal"
+                android:textStyle="bold"
+                android:textSize="18sp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 app:layout_constraintStart_toEndOf="@+id/commentProfilePic"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/blogDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:text="Jan 20, 2018"
+                android:text="@string/post_date_text"
+                android:textSize="12sp"
                 app:layout_constraintStart_toEndOf="@+id/commentProfilePic"
                 app:layout_constraintTop_toBottomOf="@+id/commentUsername" />
+
+            <View
+                android:id="@+id/top_view"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                app:layout_constraintTop_toBottomOf="@+id/blogDate"/>
 
             <ImageView
                 android:id="@+id/blogImage"
@@ -107,24 +116,34 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/commentProfilePic"
-                app:srcCompat="@drawable/image_placeholder" />
+                app:srcCompat="@drawable/image_placeholder"
+                tools:ignore="ContentDescription"
+                app:elevation="3dp" />
 
-            <TextView
+            <View
+                android:id="@+id/bottom_view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                app:layout_constraintTop_toBottomOf="@+id/blogImage"/>
+
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/blogDescription"
                 android:layout_width="359dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="18dp"
                 android:layout_marginStart="18dp"
                 android:layout_marginTop="12dp"
-                android:text="Lorem ipusm metaflytica sem uin postide asnsdh the sgt as lorem "
+                android:text="@string/post_content_text"
                 android:textColor="#002863"
                 android:textSize="15sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/blogImage" />
+                app:layout_constraintTop_toBottomOf="@+id/bottom_view" />
 
-            <TextView
+
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/blog_like_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -139,7 +158,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/blogDescription"
                 app:layout_constraintVertical_bias="1.0" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/blog_comment_count"
                 android:layout_width="121dp"
                 android:layout_height="19dp"

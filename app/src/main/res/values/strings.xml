@@ -23,4 +23,8 @@
     <string name="profile_image_text">imageview to view current user profile</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="write_a_post_text">write a post</string>
+    <string name="username_row_text">username</string>
+    <string name="post_content_text">Lorem ipusm metaflytica sem uin postide asnsdh the sgt as lorem</string>
+    <string name="post_date_text">Jan 20, 2018</string>
 </resources>

@@ -1,14 +1,13 @@
 package com.example.blogger.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,22 +15,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.example.blogger.R;
 import com.example.blogger.adapters.PostsAdapter;
-import com.example.blogger.dialogs.PostFragment;
+import com.example.blogger.dialogs.AddPostDialogFragment;
+import com.example.blogger.dialogs.NewPostDialogFrag;
 import com.example.blogger.models.PostsModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     List<PostsModel> list;
     PostsAdapter adapter;
     Context context;
+    FragmentManager fm = getFragmentManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,15 +147,16 @@ public class MainActivity extends AppCompatActivity {
                     mdl.setImage_url(null);
                     mdl.setUser_id(FirebaseAuth.getInstance().getUid());
                     int pos = 1;
-                    //mdl.setImage_thumb("https://picsum.photos/id/"+pos+"/200/300");
                     mdl.setImage_thumb(null);
                     mdl.setTimeStamp("07/April/2021");
                     list.add(mdl);
             }
+
             adapter = new PostsAdapter(context ,list);
             recyclerView.setAdapter(adapter);
             //close dialog
             dialog.dismiss();
+
             //firebase instatiation
             /*reference.child("Posts").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -202,11 +199,9 @@ public class MainActivity extends AppCompatActivity {
 
                 try
                 {
-                    /*PostFragment postFragment = new PostFragment();
-                    postFragment.show(getSupportFragmentManager().beginTransaction(), "post fragment");*/
-
-                    startActivity(new Intent(getApplicationContext(), PostActivity.class));
-                    finish();
+                    //call the dialog to write post content on
+                    AddPostDialogFragment postDialogFrag = new AddPostDialogFragment();
+                    postDialogFrag.show(getSupportFragmentManager().beginTransaction(), "Add menu");
 
                 }catch (Exception e) {
                     Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_LONG).show();

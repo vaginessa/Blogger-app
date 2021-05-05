@@ -22,7 +22,9 @@ import com.example.blogger.models.PostsModel;
 import com.example.blogger.models.UserModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -41,9 +43,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class SignupActivity extends AppCompatActivity {
 
     private TextInputLayout name_txt, surname_txt,email_txt,password_txt, confirmpassword_txt;
-    private TextView backToLogin_tv;
+    private MaterialTextView backToLogin_tv;
     private ImageView selectedImage;
-    private Button signup_button;
+    private MaterialButton signup_button;
 
     //firebase objects
     private DatabaseReference reference;
@@ -90,11 +92,11 @@ public class SignupActivity extends AppCompatActivity {
         password_txt = (TextInputLayout)findViewById(R.id.reg_password);
         confirmpassword_txt = (TextInputLayout)findViewById(R.id.reg_confirmpassword);
         //already an account textview
-        backToLogin_tv = (TextView)findViewById(R.id.link_login);
+        backToLogin_tv = (MaterialTextView) findViewById(R.id.link_login);
         //profile imageview
         selectedImage = (CircleImageView)findViewById(R.id.reg_profile_image);
         //button
-        signup_button = (Button)findViewById(R.id.btn_signup);
+        signup_button = (MaterialButton) findViewById(R.id.btn_signup);
     }
 
     private void animateComponents()

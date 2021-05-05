@@ -16,7 +16,7 @@
         android:paddingRight="24dp"
         tools:ignore="MissingConstraints,UselessParent">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/blogger_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -60,18 +60,16 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_login"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
-            android:padding="12dp"
             app:elevation="3dp"
-            android:background="@color/deep_sky_blue"
             android:text="@string/login_text"/>
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/link_signup"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

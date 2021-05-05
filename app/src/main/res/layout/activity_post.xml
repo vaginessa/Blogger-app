@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.PostActivity">
 
-
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/commentProfilePic"
+        android:id="@+id/postProfilePic"
         android:layout_width="69dp"
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
@@ -18,8 +18,8 @@
         app:layout_constraintTop_toTopOf="parent"
         android:contentDescription="@string/user_profile_pic_descr" />
 
-    <TextView
-        android:id="@+id/commentUsername"
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/postUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
@@ -28,20 +28,27 @@
         android:textColor="#2a2929"
         android:textStyle="normal"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintStart_toEndOf="@+id/commentProfilePic"
+        app:layout_constraintStart_toEndOf="@+id/postProfilePic"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/blogDate"
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/postDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:text="@string/defualt_date_text"
-        app:layout_constraintStart_toEndOf="@+id/commentProfilePic"
-        app:layout_constraintTop_toBottomOf="@+id/commentUsername" />
+        app:layout_constraintStart_toEndOf="@+id/postProfilePic"
+        app:layout_constraintTop_toBottomOf="@+id/postUsername" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        app:layout_constraintStart_toEndOf="@+id/postProfilePic"
+        app:layout_constraintTop_toBottomOf="@+id/postDate"
+        android:backgroundTint="@color/black"/>
 
     <ImageView
-        android:id="@+id/blogImage"
+        android:id="@+id/postImage"
         android:layout_width="0dp"
         android:layout_height="204dp"
         android:layout_marginTop="8dp"
@@ -51,47 +58,48 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/commentProfilePic"
+        app:layout_constraintTop_toBottomOf="@+id/postProfilePic"
         app:srcCompat="@drawable/image_placeholder"
         android:contentDescription="@string/post_image_descr" />
 
-    <EditText
-        android:id="@+id/blogDescription"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/postDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
-        android:hint="@string/enter_description_text"
-        android:padding="15dp"
-        android:background="@drawable/post_backgroung"
+        android:padding="10dp"
         android:textColor="#002863"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/blogImage"
+        app:layout_constraintTop_toBottomOf="@+id/postImage"
         android:importantForAutofill="no"
-        android:inputType="textMultiLine" />
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-    <Button
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/enter_description_text"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/newPostBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="128dp"
+        android:layout_marginBottom="20dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="10dp"
         android:text="@string/post_button_text"
         android:textAllCaps="false"
         android:textColor="#000"
         android:textSize="18sp"
-        android:background="#00Bfff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/blogDescription"
+        app:layout_constraintTop_toBottomOf="@+id/postDescription"
         app:layout_constraintVertical_bias="0.056" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

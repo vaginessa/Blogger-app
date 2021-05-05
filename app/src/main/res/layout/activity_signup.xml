@@ -27,7 +27,6 @@
             android:layout_marginBottom="10dp"
             android:layout_centerHorizontal="true"
             android:layout_width="150dp"
-            android:contentDescription="profile imageview descr"
             android:layout_height="150dp"
             android:src="@drawable/ic_account_circle_black_24dp"
             android:tint="@color/deep_sky_blue"
@@ -149,27 +148,25 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Signup Button -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_signup"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="24dp"
+
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:padding="12dp"
             app:elevation="3dp"
             android:text="Create Account"
-            android:background="@color/deep_sky_blue"
             android:layout_below="@id/reg_confirmpassword"/>
 
-        <TextView android:id="@+id/link_login"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/link_login"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
+            android:layout_marginTop="24dp"
             android:text="Already a member? Login"
             android:gravity="center"
-            android:textSize="16dip"
+            android:textSize="16sp"
             android:layout_below="@id/btn_signup"/>
 
     </RelativeLayout>

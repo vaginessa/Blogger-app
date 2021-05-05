@@ -79,12 +79,12 @@ public class PostActivity extends AppCompatActivity {
         reference = FirebaseDatabase.getInstance().getReference().child("Blog");
         userRef = FirebaseDatabase.getInstance().getReference().child("Blog");
 
-        postImage = (ImageView)findViewById(R.id.blogImage) ;
-        postDescr = (EditText)findViewById(R.id.blogDescription);
-        postDate = (TextView)findViewById(R.id.blogDate);
+        postImage = (ImageView)findViewById(R.id.postImage) ;
+        postDescr = (EditText)findViewById(R.id.postDescription);
+        postDate = (TextView)findViewById(R.id.postDate);
 
-        postAuthor = (TextView)findViewById(R.id.commentUsername);
-        profileCircleView = (CircleImageView)findViewById(R.id.commentProfilePic);
+        postAuthor = (TextView)findViewById(R.id.postUsername);
+        profileCircleView = (CircleImageView)findViewById(R.id.postProfilePic);
 
         postButton = (Button)findViewById(R.id.newPostBtn);
 

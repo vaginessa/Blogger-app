@@ -6,8 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.blogger.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -42,20 +45,39 @@ public class SplashScreen extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try
-                {
-                    startActivity(new Intent(getApplicationContext(), SigninActivity.class));
-                    finish();
+        FirebaseUser user =  FirebaseAuth.getInstance().getCurrentUser();
+        String userId = FirebaseAuth.getInstance().getUid();
 
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        if (user != null )
+        {
+            try
+            {
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try
+                        {
+                            /*startActivity(new Intent(getApplicationContext(), SigninActivity.class));
+                            finish();*/
+
+                            Thread.sleep(3000);
+
+                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            finish();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                thread.start();
+
+            }catch (Exception e)
+            {
+                Toast.makeText(getApplicationContext(), ""+e.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
-        thread.start();
+        }else
+        {
+            Toast.makeText(getApplicationContext(),"Please login or sign up...!", Toast.LENGTH_LONG).show();
+        }
     }
 }
