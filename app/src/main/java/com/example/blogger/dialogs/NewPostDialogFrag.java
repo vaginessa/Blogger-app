@@ -184,7 +184,7 @@ public class NewPostDialogFrag extends DialogFragment {
                                 //note the postImg object is not for the image only
 
                                 PostsModel posts = new PostsModel();
-                                posts.setImage_url(uri.toString());
+                                posts.setUrl(uri.toString());
                                 posts.setDesc(description_val);
                                 posts.setTimeStamp(date);
 

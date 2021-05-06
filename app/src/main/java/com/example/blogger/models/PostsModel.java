@@ -4,16 +4,16 @@ import java.util.Date;
 
 public class PostsModel {
 
-    public String image_url, image_thumb, desc,user_id;
-    public String author, profile_pic;
-    public String timeStamp;
+    private String url, image_thumb, desc,user_id;
+    private String author, profile_pic;
+    private String timeStamp, key;
 
     public PostsModel() {
     }
 
-    public PostsModel(String image_url, String image_thumb, String desc, String user_id, String timeStamp, String author, String profile_pic)
+    public PostsModel(String image_url, String image_thumb, String desc, String user_id, String timeStamp, String author, String profile_pic, String key)
     {
-        this.image_url = image_url;
+        this.url = image_url;
         this.image_thumb = image_thumb;
         this.desc = desc;
         this.user_id = user_id;
@@ -21,14 +21,15 @@ public class PostsModel {
         //author
         this.author = author;
         this.profile_pic = profile_pic;
+        this.key = key;
     }
 
-    public String getImage_url() {
-        return image_url;
+    public String getUrl() {
+        return url;
     }
 
-    public void setImage_url(String image_url) {
-        this.image_url = image_url;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getImage_thumb() {
@@ -77,5 +78,13 @@ public class PostsModel {
 
     public void setProfile_pic(String profile_pic) {
         this.profile_pic = profile_pic;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }

@@ -229,7 +229,7 @@ public class PostActivity extends AppCompatActivity {
 
 
                                 PostsModel posts = new PostsModel();
-                                posts.setImage_url(uri.toString());
+                                posts.setUrl(uri.toString());
                                 posts.setDesc(description_val);
                                 posts.setTimeStamp(date);
 

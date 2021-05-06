@@ -1,5 +1,8 @@
 package com.example.blogger.activities;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,6 +12,7 @@ import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -21,14 +25,26 @@ import com.example.blogger.adapters.PostsAdapter;
 import com.example.blogger.dialogs.AddPostDialogFragment;
 import com.example.blogger.dialogs.NewPostDialogFrag;
 import com.example.blogger.models.PostsModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -57,13 +73,12 @@ public class MainActivity extends AppCompatActivity {
 
         new_post = findViewById(R.id.fab_new_post);
         //logout_button = (FloatingActionButton)findViewById(R.id.fab_logout);
-
         recyclerView = findViewById(R.id.posts_rv);
         recyclerView.setHasFixedSize(true);
 
-        recyclerView.setLayoutManager( new LinearLayoutManager(this));
+        /*recyclerView.setLayoutManager( new LinearLayoutManager(this));
 
-        list = new ArrayList<>();
+        list = new ArrayList<>();*/
 
 
         //call methods
@@ -136,24 +151,42 @@ public class MainActivity extends AppCompatActivity {
         dialog.setCancelable(false);
         dialog.show();
 
+        list = new ArrayList<>();
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         try
         {
-            for(int i=0; i<25; i++)
-            {
-                    PostsModel mdl = new PostsModel();
-                    mdl.setAuthor("whiz");
-                    mdl.setDesc("post descr");
-                    //mdl.setImage_url("https://picsum.photos/id/"+i+"/200/300");
-                    mdl.setImage_url(null);
-                    mdl.setUser_id(FirebaseAuth.getInstance().getUid());
-                    int pos = 1;
-                    mdl.setImage_thumb(null);
-                    mdl.setTimeStamp("07/April/2021");
-                    list.add(mdl);
-            }
+            FirebaseFirestore
+                    .getInstance()
+                    .collection("Feeds")
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-            adapter = new PostsAdapter(context ,list);
-            recyclerView.setAdapter(adapter);
+                                if (task.isSuccessful())
+                                {
+                                    for (QueryDocumentSnapshot snapshot:task.getResult())
+                                    {
+                                        PostsModel posts = snapshot.toObject(PostsModel.class);
+                                        list.add(posts);
+                                    }
+
+                                    PostsAdapter adapter = new PostsAdapter(context,list);
+                                    recyclerView.setAdapter(adapter);
+                                }
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+
+                }
+            });
+
+            //list.add(posts);
+
+
             //close dialog
             dialog.dismiss();
 

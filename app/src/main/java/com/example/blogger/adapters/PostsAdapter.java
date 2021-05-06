@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,15 +28,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
 
     private final List<PostsModel> postList;
     private final Context context;
-    private FragmentManager fragmentManager;
 
     public PostsAdapter(Context context,List<PostsModel> postsList) {
         this.postList = postsList;
         this.context = context;
-        //this.fragmentManager = fragmentManager;
     }
-
-    private FragmentManager Fm;
 
     @NonNull
     @Override
@@ -49,11 +46,13 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 
         PostsModel posts = postList.get(position);
+
         holder.txtDescription.setText(posts.getDesc());
         holder.txtPostTime.setText(posts.getTimeStamp());
+        holder.txtAuthor.setText(posts.getAuthor());
 
         Picasso.get()
-                .load(posts.getImage_url())
+                .load(posts.getUrl())
                 .centerCrop(50)
                 .into(holder.postImage);
     }
@@ -66,6 +65,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
 
     View mView;
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
         private final MaterialTextView txtDescription;
         private final ImageView postImage;
         private final MaterialTextView txtPostTime;
@@ -81,9 +81,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
 
             txtDescription=(MaterialTextView)itemView.findViewById(R.id.blogDescription);
             postImage = (ImageView)itemView.findViewById(R.id.blogImage);
-            txtPostTime = (MaterialTextView)itemView.findViewById(R.id.blogDate);
-            txtAuthor = (MaterialTextView)itemView.findViewById(R.id.commentUsername);
-            authorImage = (CircleImageView)itemView.findViewById(R.id.commentProfilePic);
+            txtPostTime = (MaterialTextView)itemView.findViewById(R.id.postDate);
+            txtAuthor = (MaterialTextView)itemView.findViewById(R.id.postUsername);
+            authorImage = (CircleImageView)itemView.findViewById(R.id.postProfilePic);
+
             comments_iv = itemView.findViewById(R.id.blog_comment);
 
             comments_iv.setOnClickListener(this);
