@@ -84,8 +84,9 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/username_row_text"
                 android:textColor="#2a2929"
-                android:textStyle="bold"
+                android:textStyle="normal"
                 android:textSize="18sp"
+                app:fontFamily="@font/concert_one_regular"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 app:layout_constraintStart_toEndOf="@+id/postProfilePic"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -97,6 +98,7 @@
                 android:layout_marginStart="12dp"
                 android:text="@string/post_date_text"
                 android:textSize="12sp"
+                app:fontFamily="@font/cabin_condensed_regular"
                 app:layout_constraintStart_toEndOf="@+id/postProfilePic"
                 app:layout_constraintTop_toBottomOf="@+id/postUsername" />
 
@@ -137,6 +139,7 @@
                 android:text="@string/post_content_text"
                 android:textColor="#002863"
                 android:textSize="15sp"
+                app:fontFamily="@font/cabin_condensed_medium"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -153,6 +156,7 @@
                 android:text="@string/post_likes_text"
                 android:textColor="@color/gray"
                 android:textStyle="bold"
+                app:fontFamily="@font/cabin_condensed_regular"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/blog_like"
                 app:layout_constraintTop_toBottomOf="@+id/blogDescription"
@@ -168,6 +172,7 @@
                 android:text="@string/post_comments_text"
                 android:textColor="@color/gray"
                 android:textStyle="bold"
+                app:fontFamily="@font/cabin_condensed_regular"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/blog_like"
                 app:layout_constraintTop_toBottomOf="@+id/blogDescription"

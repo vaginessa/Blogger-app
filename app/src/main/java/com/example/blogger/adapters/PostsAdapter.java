@@ -80,7 +80,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             mView = itemView;
 
             txtDescription=(MaterialTextView)itemView.findViewById(R.id.blogDescription);
-            postImage = (ImageView)itemView.findViewById(R.id.blogImage);
+            postImage = (ImageView)itemView.findViewById(R.id.postImage);
             txtPostTime = (MaterialTextView)itemView.findViewById(R.id.postDate);
             txtAuthor = (MaterialTextView)itemView.findViewById(R.id.postUsername);
             authorImage = (CircleImageView)itemView.findViewById(R.id.postProfilePic);

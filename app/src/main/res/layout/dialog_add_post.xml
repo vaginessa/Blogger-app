@@ -79,6 +79,7 @@
             android:maxLines="4"
             android:scrollbars="vertical"
             android:hint="@string/write_a_post_text"
+            android:fontFamily="@font/cabin_condensed_medium"
             android:singleLine="false"
             android:id="@+id/input_post_message"
 
