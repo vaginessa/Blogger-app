@@ -87,7 +87,6 @@ public class ProfileDialogFragment extends DialogFragment {
         close_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //dismiss the dialog
                 dismiss();
             }
@@ -96,7 +95,6 @@ public class ProfileDialogFragment extends DialogFragment {
         update_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //display this message
                 Toast.makeText(getActivity(), getString(R.string.profile_successful_text), Toast.LENGTH_LONG).show();
             }
