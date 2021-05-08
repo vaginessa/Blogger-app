@@ -1,6 +1,5 @@
 package com.example.blogger.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,21 +20,21 @@ import android.widget.Toast;
 import com.example.blogger.R;
 import com.example.blogger.adapters.PostsAdapter;
 import com.example.blogger.dialogs.AddPostDialogFragment;
+import com.example.blogger.dialogs.LoadingDialogFragment;
+import com.example.blogger.dialogs.ProfileDialogFragment;
 import com.example.blogger.models.PostsModel;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -106,107 +106,124 @@ public class MainActivity extends AppCompatActivity {
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        toolbar.setNavigationIcon(R.drawable.ic_logout_black);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (user != null)
-                {
-                    //show dialog for logout
-                    logoutProgress.show();
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(MainActivity.this);
+                builder.setTitle(getString(R.string.alert_title));
+                builder.setMessage(getString(R.string.logout_message_text));
+                builder.setPositiveButton(getString(R.string.position_text), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
-                    FirebaseAuth.getInstance().signOut();
+                        if (user != null)
+                        {
+                            //show dialog for logout
+                            logoutProgress.show();
 
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
+                            FirebaseAuth.getInstance().signOut();
 
-                            startActivity(new Intent(getApplicationContext(), SigninActivity.class));
-                            finish();
-                            //close dialog if user chooses yes
-                            logoutProgress.dismiss();
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    startActivity(new Intent(getApplicationContext(), SigninActivity.class));
+                                    finish();
+                                    //close dialog if user chooses yes
+                                    logoutProgress.dismiss();
+                                }
+                            },3000);
+                        }else
+                        {
+                            Toast.makeText(getApplicationContext(), "An error occured while trying to logout", Toast.LENGTH_LONG).show();
                         }
-                    },3000);
+                    }
+                }).setNegativeButton(getString(R.string.negative_text), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
-                }
+                        //cancel the dialog
+                        dialog.dismiss();
+                    }
+                }).show();
+
+                /*AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+                    alertDialog.setMessage(getString(R.string.logout_message_text));
+                    alertDialog.setPositiveButton(getString(R.string.position_text), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            //show dialog for logout
+                            logoutProgress.show();
+
+                            FirebaseAuth.getInstance().signOut();
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    startActivity(new Intent(getApplicationContext(), SigninActivity.class));
+                                    finish();
+                                    //close dialog if user chooses yes
+                                    logoutProgress.dismiss();
+                                }
+                            },3000);
+                        }
+                    }).setNegativeButton(getString(R.string.negative_text), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            //cancel the dialog
+                            dialog.dismiss();
+                        }
+                    });
+                    alertDialog.show();*/
+
             }
         });
     }
 
     private void getAllPosts()
     {
-        final ProgressDialog dialog = new ProgressDialog(this);
+        /*final ProgressDialog dialog = new ProgressDialog(this);
         dialog.setMessage("Loading... Please wait");
         dialog.setCancelable(false);
-        dialog.show();
+        dialog.show();*/
+        LoadingDialogFragment loadingDialogFragment = new LoadingDialogFragment();
+        loadingDialogFragment.show(getSupportFragmentManager().beginTransaction(), "Loading");
 
         list = new ArrayList<>();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         try
         {
-            FirebaseFirestore
-                    .getInstance()
-                    .collection("Feeds")
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            String currentDate = new SimpleDateFormat("dd/MMM/yyyy", Locale.getDefault()).format(new Date());
+            String currentTime = new SimpleDateFormat("HH:mm:ss aa", Locale.getDefault()).format(new Date());
 
-                                if (task.isSuccessful())
-                                {
-                                    for (QueryDocumentSnapshot snapshot:task.getResult())
-                                    {
-                                        PostsModel posts = snapshot.toObject(PostsModel.class);
-                                        list.add(posts);
-                                    }
+            for (int i = 0 ; i < 20 ; i++)
+            {
+                PostsModel posts = new PostsModel();
 
-                                    PostsAdapter adapter = new PostsAdapter(context,list);
-                                    recyclerView.setAdapter(adapter);
-                                }
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
+                posts.setAuthor("thor ragnor");
+                posts.setKey(null);
+                posts.setUser_id(null);
+                posts.setTimeStamp(currentDate+" "+currentTime);
+                posts.setDesc("this is a test for the posts description");
+                posts.setUrl(null);
 
+                list.add(posts);
 
-                }
-            });
+            }
 
-            //list.add(posts);
-
-
+            adapter = new PostsAdapter(getApplicationContext(), list);
+            recyclerView.setAdapter(adapter);
             //close dialog
-            dialog.dismiss();
+            //dialog.dismiss();
+            loadingDialogFragment.dismiss();
 
-            //firebase instatiation
-            /*reference.child("Posts").addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                    if (snapshot.exists())
-                    {
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren())
-                        {
-                            PostsModel l= dataSnapshot.getValue(PostsModel.class);
-                            list.add(l);
-                        }
-
-                        adapter = new PostsAdapter(context ,list);
-                        recyclerView.setAdapter(adapter);
-                    }
-
-                    dialog.dismiss();
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                    dialog.dismiss();
-
-                    Toast.makeText(getApplicationContext(),""+error.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            });*/
+            String time = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(new Date());
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -239,9 +256,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                try {
-                    startActivity(new Intent(getApplicationContext() ,ProfileActivity.class));
-                    finish();
+                try
+                {
+                    ProfileDialogFragment profileDialogFragment = new ProfileDialogFragment();
+                    profileDialogFragment.show(getSupportFragmentManager().beginTransaction(), "profile");
+                    /*startActivity(new Intent(getApplicationContext() ,ProfileActivity.class));
+                    finish();*/
                 }catch (Exception e)
                 {
                     Toast.makeText(getApplicationContext(),""+e.getMessage(),Toast.LENGTH_LONG).show();

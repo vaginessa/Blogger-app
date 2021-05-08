@@ -9,12 +9,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.blogger.R;
+import com.example.blogger.dialogs.LoadingDialogFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class SplashScreen extends AppCompatActivity {
 
     private TextView bloggerTitle;
+    private LoadingDialogFragment loadingDialogFragment;
 
     //for animation opacity
     float v = 0;
@@ -52,14 +54,14 @@ public class SplashScreen extends AppCompatActivity {
         {
             try
             {
+                loadingDialogFragment = new LoadingDialogFragment();
+                loadingDialogFragment.show(getSupportFragmentManager().beginTransaction(), "loading");
+
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try
                         {
-                            /*startActivity(new Intent(getApplicationContext(), SigninActivity.class));
-                            finish();*/
-
                             Thread.sleep(3000);
 
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));

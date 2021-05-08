@@ -133,7 +133,6 @@ public class SigninActivity extends AppCompatActivity {
 
                                 Toast.makeText(getApplicationContext(), "Login successful...", Toast.LENGTH_SHORT).show();
                                 Intent intentMainActivity = new Intent(getApplicationContext(), MainActivity.class);
-                                //overridePendingTransition(R.anim.fade_in_anim, R.anim.fade_out_anim);
                                 startActivity(intentMainActivity);
 
                                 loginProgress.dismiss();
