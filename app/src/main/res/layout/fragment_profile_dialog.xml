@@ -39,7 +39,7 @@
             android:id="@+id/close_btn"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="@string/profile_close_text"
+            android:text="@string/profile_logout_text"
             app:strokeColor="@color/light_slate_gray"
             />
 

@@ -1,5 +1,8 @@
 package com.example.blogger.activities;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,8 +13,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,18 +28,31 @@ import com.example.blogger.dialogs.AddPostDialogFragment;
 import com.example.blogger.dialogs.LoadingDialogFragment;
 import com.example.blogger.dialogs.ProfileDialogFragment;
 import com.example.blogger.models.PostsModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -76,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
         postActivity();
         GoToProfile();
         //logoutUser();
-        initToolbar();
     }
 
     @Override
@@ -99,100 +116,26 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void initToolbar()
-    {
-        final ProgressDialog logoutProgress = new ProgressDialog(MainActivity.this);
-        logoutProgress.setMessage("Logging out... Please wait");
-
-        user = FirebaseAuth.getInstance().getCurrentUser();
-
-        toolbar.setNavigationIcon(R.drawable.ic_logout_black);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(MainActivity.this);
-                builder.setTitle(getString(R.string.alert_title));
-                builder.setMessage(getString(R.string.logout_message_text));
-                builder.setPositiveButton(getString(R.string.position_text), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        if (user != null)
-                        {
-                            //show dialog for logout
-                            logoutProgress.show();
-
-                            FirebaseAuth.getInstance().signOut();
-
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-
-                                    startActivity(new Intent(getApplicationContext(), SigninActivity.class));
-                                    finish();
-                                    //close dialog if user chooses yes
-                                    logoutProgress.dismiss();
-                                }
-                            },3000);
-                        }else
-                        {
-                            Toast.makeText(getApplicationContext(), "An error occured while trying to logout", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }).setNegativeButton(getString(R.string.negative_text), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        //cancel the dialog
-                        dialog.dismiss();
-                    }
-                }).show();
-
-                /*AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-                    alertDialog.setMessage(getString(R.string.logout_message_text));
-                    alertDialog.setPositiveButton(getString(R.string.position_text), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                            //show dialog for logout
-                            logoutProgress.show();
-
-                            FirebaseAuth.getInstance().signOut();
-
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-
-                                    startActivity(new Intent(getApplicationContext(), SigninActivity.class));
-                                    finish();
-                                    //close dialog if user chooses yes
-                                    logoutProgress.dismiss();
-                                }
-                            },3000);
-                        }
-                    }).setNegativeButton(getString(R.string.negative_text), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                            //cancel the dialog
-                            dialog.dismiss();
-                        }
-                    });
-                    alertDialog.show();*/
-
-            }
-        });
-    }
-
     private void getAllPosts()
     {
-        /*final ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setMessage("Loading... Please wait");
-        dialog.setCancelable(false);
-        dialog.show();*/
-        LoadingDialogFragment loadingDialogFragment = new LoadingDialogFragment();
+        final LoadingDialogFragment loadingDialogFragment = new LoadingDialogFragment();
+        loadingDialogFragment.setCancelable(false);
+        //Objects.requireNonNull(loadingDialogFragment.getDialog()).getWindow().setGravity(Gravity.CENTER);
         loadingDialogFragment.show(getSupportFragmentManager().beginTransaction(), "Loading");
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(5000);
+                    loadingDialogFragment.dismiss();
+                }catch (Exception e)
+                {
+                    Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        thread.start();
 
         list = new ArrayList<>();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -202,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
             String currentDate = new SimpleDateFormat("dd/MMM/yyyy", Locale.getDefault()).format(new Date());
             String currentTime = new SimpleDateFormat("HH:mm:ss aa", Locale.getDefault()).format(new Date());
 
-            for (int i = 0 ; i < 20 ; i++)
+            /*for (int i = 0 ; i < 20 ; i++)
             {
                 PostsModel posts = new PostsModel();
 
@@ -215,13 +158,28 @@ public class MainActivity extends AppCompatActivity {
 
                 list.add(posts);
 
-            }
+            }*/
 
-            adapter = new PostsAdapter(getApplicationContext(), list);
-            recyclerView.setAdapter(adapter);
-            //close dialog
-            //dialog.dismiss();
-            loadingDialogFragment.dismiss();
+
+            FirebaseFirestore
+                    .getInstance()
+                    .collection("Feeds")
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot snapshot : Objects.requireNonNull(task.getResult()))
+                                {
+                                    PostsModel posts = snapshot.toObject(PostsModel.class);
+                                    list.add(posts);
+                                }
+                                adapter = new PostsAdapter(getApplicationContext(), list);
+                                recyclerView.setAdapter(adapter);
+                            }
+                        }
+                    });
+
 
             String time = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(new Date());
 
@@ -236,7 +194,6 @@ public class MainActivity extends AppCompatActivity {
         new_post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 try
                 {
                     //call the dialog to write post content on

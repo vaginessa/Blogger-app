@@ -24,6 +24,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Objects;
+
 public class SigninActivity extends AppCompatActivity {
 
     private TextInputLayout email_txt, password_txt;
@@ -52,14 +54,38 @@ public class SigninActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (!validateEmail() || validatePassword())
+                String user_email = Objects.requireNonNull(email_txt.getEditText()).getText().toString().trim();
+                String user_password = Objects.requireNonNull(password_txt.getEditText()).getText().toString().trim();
+
+                if (user_email.isEmpty())
                 {
-                    return;
+                    email_txt.getEditText().setError("Please enter an email");
+                }else if(user_password.isEmpty())
+                {
+                    password_txt.getEditText().setError("Please enter password");
+                }else if (TextUtils.isEmpty(user_email) || TextUtils.isEmpty(user_password))
+                {
+                    email_txt.getEditText().setError("Please enter an email");
+                    password_txt.getEditText().setError("Please enter password");
+                    Toast.makeText(getApplicationContext(), "Email and password field can be empty", Toast.LENGTH_LONG).show();
+                }else
+                {
+                    auth.signInWithEmailAndPassword(user_email, user_password)
+                            .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                                @Override
+                                public void onSuccess(AuthResult authResult) {
+
+                                    Toast.makeText(getApplicationContext(), "Login successful...", Toast.LENGTH_SHORT).show();
+                                    Intent intentMainActivity = new Intent(getApplicationContext(), MainActivity.class);
+                                    startActivity(intentMainActivity);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getApplicationContext(), ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
-
-                //called the navigate to main activity method
-                GoToMainActivity(auth);
-
             }
         });
 
@@ -114,38 +140,6 @@ public class SigninActivity extends AppCompatActivity {
 
     private void GoToMainActivity(FirebaseAuth auth)
     {
-        final ProgressDialog loginProgress = new ProgressDialog(SigninActivity.this);
-        loginProgress.setMessage("Authenticating...");
-
-        String user_email = email_txt.getEditText().getText().toString().trim();
-        String user_password = password_txt.getEditText().getText().toString().trim();
-
-        auth.signInWithEmailAndPassword(user_email, user_password)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-
-                        loginProgress.show();
-
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                Toast.makeText(getApplicationContext(), "Login successful...", Toast.LENGTH_SHORT).show();
-                                Intent intentMainActivity = new Intent(getApplicationContext(), MainActivity.class);
-                                startActivity(intentMainActivity);
-
-                                loginProgress.dismiss();
-                            }
-                        },3000);
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     //validations

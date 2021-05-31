@@ -27,6 +27,7 @@ public class SplashScreen extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
 
         initComponents();
+        //GoToSignIn();
     }
 
     private void initComponents()
@@ -47,39 +48,39 @@ public class SplashScreen extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        FirebaseUser user =  FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser user =  FirebaseAuth.getInstance().getCurrentUser();
         String userId = FirebaseAuth.getInstance().getUid();
 
-        if (user != null )
-        {
-            try
-            {
-                loadingDialogFragment = new LoadingDialogFragment();
-                loadingDialogFragment.show(getSupportFragmentManager().beginTransaction(), "loading");
+        try {
+            loadingDialogFragment = new LoadingDialogFragment();
+            loadingDialogFragment.show(getSupportFragmentManager().beginTransaction(), "loading");
 
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try
-                        {
-                            Thread.sleep(3000);
-
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try
+                    {
+                        Thread.sleep(3000);
+                        if (user != null) {
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                            finish();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        }else {
+                            startActivity(new Intent(getApplicationContext(),SigninActivity.class));
                         }
+                        finish();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                });
-                thread.start();
+                }
+            });
+            thread.start();
 
-            }catch (Exception e)
-            {
-                Toast.makeText(getApplicationContext(), ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }else
-        {
-            Toast.makeText(getApplicationContext(),"Please login or sign up...!", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void GoToSignIn()
+    {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     }
 }

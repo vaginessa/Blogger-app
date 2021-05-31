@@ -1,5 +1,6 @@
 package com.example.blogger.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.blogger.R;
 import com.example.blogger.dialogs.AddPostDialogFragment;
 import com.example.blogger.dialogs.CommentsDialogFragment;
@@ -42,6 +45,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         return new ViewHolder(view);
     }
 
+    @SuppressLint("CheckResult")
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 
@@ -51,10 +55,22 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         holder.txtPostTime.setText(posts.getTimeStamp());
         holder.txtAuthor.setText(posts.getAuthor());
 
-        Picasso.get()
-                .load(posts.getUrl())
+       /*Picasso.get()
+               .load(posts.getUrl())
                 .centerCrop(50)
-                .into(holder.postImage);
+                .into(holder.authorImage);*/
+        RequestOptions placeholderOption = new RequestOptions();
+
+        if (posts.getUrl() != null)
+        {
+            Glide.with(context).applyDefaultRequestOptions(placeholderOption)
+                    .load(posts.getUrl())
+                    .into(holder.postImage);
+        }else
+        {
+            placeholderOption.placeholder(R.drawable.ic_account_circle_black_24dp);
+        }
+
     }
 
     @Override
@@ -78,12 +94,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             super(itemView);
 
             mView = itemView;
-
-            txtDescription=(MaterialTextView)itemView.findViewById(R.id.blogDescription);
-            postImage = (ImageView)itemView.findViewById(R.id.postImage);
-            txtPostTime = (MaterialTextView)itemView.findViewById(R.id.postDate);
-            txtAuthor = (MaterialTextView)itemView.findViewById(R.id.postUsername);
-            authorImage = (CircleImageView)itemView.findViewById(R.id.postProfilePic);
+            txtDescription= itemView.findViewById(R.id.blogDescription);
+            postImage = itemView.findViewById(R.id.postImage);
+            txtPostTime = itemView.findViewById(R.id.postDate);
+            txtAuthor = itemView.findViewById(R.id.postUsername);
+            authorImage = itemView.findViewById(R.id.postProfilePic);
 
             comments_iv = itemView.findViewById(R.id.blog_comment);
 
@@ -99,12 +114,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
                 try
                 {
                     //call the dialog to write post content on
-
                     Toast.makeText(v.getContext(), String.valueOf(pos), Toast.LENGTH_LONG).show();
-
-                    /*CommentsDialogFragment commentsDialogFragment = new CommentsDialogFragment();
-                    FragmentTransaction ft = fragmentManager.beginTransaction();
-                    commentsDialogFragment.showNow(v.getContext().get, "comments");*/
 
                 } catch (Exception e) {
                     e.printStackTrace();

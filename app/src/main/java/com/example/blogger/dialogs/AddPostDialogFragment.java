@@ -1,8 +1,5 @@
 package com.example.blogger.dialogs;
-
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -32,19 +29,14 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.ServerTimestamp;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
@@ -116,20 +108,18 @@ public class AddPostDialogFragment extends DialogFragment {
             @Override
             public void onClick(final View v) {
 
-                if(input_message.getText().toString().isEmpty())
+                if(Objects.requireNonNull(input_message.getText()).toString().isEmpty())
                 {
                     input_message.setError("Type something");
                     return;
                 }
-                String currentDate = new SimpleDateFormat("ddd/MMM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
+                //String currentDate = new SimpleDateFormat("ddd/MMM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
                 //PostsModel posts = new PostsModel(null, null, null,null,input_message.getText().toString());
 
-                DatabaseReference reference = FirebaseDatabase
+                FirebaseDatabase
                         .getInstance()
                         .getReference()
-                        .child("Blog");
-
-                reference.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child("Users").child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -137,14 +127,12 @@ public class AddPostDialogFragment extends DialogFragment {
                                 if (snapshot.exists())
                                 {
                                     //get user's details
-                                    String author = snapshot.child("name").getValue().toString();
-                                    String profile = snapshot.child("profile").getValue().toString();
-                                    String surname = snapshot.child("surname").getValue().toString();
+                                    String author = Objects.requireNonNull(snapshot.child("name").getValue()).toString();
+                                    String profile = Objects.requireNonNull(snapshot.child("profile").getValue()).toString();
+                                    String surname = Objects.requireNonNull(snapshot.child("surname").getValue()).toString();
 
                                     String fullNames = author+" "+surname;
-
-                                    /*Toast.makeText(v.getContext(), "author details are:"+author, Toast.LENGTH_LONG).show();*/
-
+                                    Toast.makeText(v.getContext(), "author details are:"+author, Toast.LENGTH_LONG).show();
                                     //post feed
                                     PostsModel postsModel = new PostsModel();
                                     postsModel.setAuthor(fullNames);

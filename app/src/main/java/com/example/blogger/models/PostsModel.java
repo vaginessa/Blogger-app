@@ -1,11 +1,10 @@
 package com.example.blogger.models;
 
-import java.util.Date;
-
 public class PostsModel {
 
     private String url, image_thumb, desc,user_id;
     private String author, profile_pic;
+
     private String timeStamp, key;
 
     public PostsModel() {

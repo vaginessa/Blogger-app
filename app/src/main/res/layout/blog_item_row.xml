@@ -86,8 +86,8 @@
                 android:text="@string/username_row_text"
                 android:textColor="#2a2929"
                 android:textStyle="normal"
-                android:textSize="24sp"
-                app:fontFamily="@font/teko_medium"
+                android:textSize="28sp"
+                app:fontFamily="@font/teko_regular"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 app:layout_constraintStart_toEndOf="@+id/postProfilePic"
                 app:layout_constraintTop_toTopOf="parent" />
