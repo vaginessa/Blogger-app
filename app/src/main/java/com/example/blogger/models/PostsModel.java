@@ -5,7 +5,7 @@ public class PostsModel {
     private String url, image_thumb, desc,user_id;
     private String author, profile_pic;
 
-    private String timeStamp, key;
+    private String timeStamp, id;
 
     public PostsModel() {
     }
@@ -20,7 +20,7 @@ public class PostsModel {
         //author
         this.author = author;
         this.profile_pic = profile_pic;
-        this.key = key;
+        this.id = key;
     }
 
     public String getUrl() {
@@ -79,11 +79,11 @@ public class PostsModel {
         this.profile_pic = profile_pic;
     }
 
-    public String getKey() {
-        return key;
+    public String getId() {
+        return id;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setId(String id) {
+        this.id = id;
     }
 }

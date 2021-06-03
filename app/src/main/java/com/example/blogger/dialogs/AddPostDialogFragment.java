@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.cazaea.sweetalert.SweetAlertDialog;
 import com.example.blogger.R;
 import com.example.blogger.models.PostsModel;
 import com.github.dhaval2404.imagepicker.ImagePicker;
@@ -32,11 +31,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
@@ -108,55 +109,51 @@ public class AddPostDialogFragment extends DialogFragment {
             @Override
             public void onClick(final View v) {
 
-                if(Objects.requireNonNull(input_message.getText()).toString().isEmpty())
-                {
+                if (Objects.requireNonNull(input_message.getText()).toString().isEmpty()) {
                     input_message.setError("Type something");
                     return;
                 }
-                //String currentDate = new SimpleDateFormat("ddd/MMM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
+                final String currentDate = new SimpleDateFormat("ddd/MMM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
                 //PostsModel posts = new PostsModel(null, null, null,null,input_message.getText().toString());
 
                 FirebaseDatabase
                         .getInstance()
-                        .getReference()
-                        .child("Users").child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+                        .getReference("Blog")
+                        .child("Users")
+                        .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                                if (snapshot.exists())
-                                {
-                                    //get user's details
-                                    String author = Objects.requireNonNull(snapshot.child("name").getValue()).toString();
+                                if (snapshot.exists()) {
+                                    String username = Objects.requireNonNull(snapshot.child("name").getValue()).toString();
                                     String profile = Objects.requireNonNull(snapshot.child("profile").getValue()).toString();
                                     String surname = Objects.requireNonNull(snapshot.child("surname").getValue()).toString();
 
-                                    String fullNames = author+" "+surname;
-                                    Toast.makeText(v.getContext(), "author details are:"+author, Toast.LENGTH_LONG).show();
-                                    //post feed
-                                    PostsModel postsModel = new PostsModel();
-                                    postsModel.setAuthor(fullNames);
-                                    postsModel.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                                    postsModel.setProfile_pic(profile);
-                                    postsModel.setTimeStamp(FieldValue.serverTimestamp().toString());
-                                    postsModel.setDesc(input_message.getText().toString());
+                                    //posts model
+                                    PostsModel posts = new PostsModel();
+                                    posts.setAuthor(String.format("%s %s", username, surname));
+                                    posts.setProfile_pic(profile);
+
+                                    posts.setDesc(input_message.getText().toString());
+                                    posts.setTimeStamp(currentDate);
+                                    posts.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                                     FirebaseFirestore
                                             .getInstance()
-                                            .collection("Feeds")
-                                            .add(postsModel)
+                                            .collection("Posts")
+                                            .add(posts)
                                             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                 @Override
                                                 public void onSuccess(final DocumentReference documentReference) {
 
-                                                    documentReference.update("key",documentReference.getId());
+                                                    documentReference.update("id",documentReference.getId());
 
-                                                    if (img_uri != null)
+                                                    if (img_uri!=null)
                                                     {
-                                                        FirebaseStorage
-                                                                .getInstance()
+                                                        FirebaseStorage.getInstance()
                                                                 .getReference()
-                                                                .child("Feeds")
+                                                                .child("Posts")
                                                                 .child(documentReference.getId())
                                                                 .putFile(img_uri)
                                                                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -165,35 +162,24 @@ public class AddPostDialogFragment extends DialogFragment {
 
                                                                         taskSnapshot
                                                                                 .getStorage()
-                                                                                .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                                                            @Override
-                                                                            public void onSuccess(Uri uri) {
+                                                                                .getDownloadUrl()
+                                                                                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                                                    @Override
+                                                                                    public void onSuccess(Uri uri) {
 
-                                                                                FirebaseFirestore.getInstance()
-                                                                                        .collection("Feeds")
-                                                                                        .document(documentReference.getId())
-                                                                                        .update("url", uri.toString());
-
-                                                                                Toast.makeText(v.getContext(), "successful", Toast.LENGTH_LONG).show();
-                                                                                dismiss();
-                                                                            }
-                                                                        });
+                                                                                        FirebaseFirestore.getInstance()
+                                                                                                .collection("Posts")
+                                                                                                .document(documentReference.getId())
+                                                                                                .update("url", uri.toString());
+                                                                                        //test text
+                                                                                        Toast.makeText(getContext(), "it gets here", Toast.LENGTH_SHORT).show();
+                                                                                    }
+                                                                                });
                                                                     }
                                                                 }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                                             @Override
                                                             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                                                                SweetAlertDialog pDialog = new SweetAlertDialog(view.getContext(), SweetAlertDialog.SUCCESS_TYPE);
-                                                                pDialog.setTitleText("Success!");
-                                                                pDialog.setContentText("Post successfully added!");
-                                                                pDialog.setConfirmText("Ok");
-                                                                pDialog.show();
-                                                                pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                                                    @Override
-                                                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                                                        dismiss();
-                                                                        sweetAlertDialog.dismissWithAnimation();
-                                                                    }
-                                                                });
+                                                                Toast.makeText(getContext(), "successfully posted!", Toast.LENGTH_LONG).show();
                                                             }
                                                         });
                                                     }
@@ -201,23 +187,18 @@ public class AddPostDialogFragment extends DialogFragment {
                                             }).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            Toast.makeText(v.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                                         }
                                     });
                                 }
-
                             }
-
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) {
-                                Toast.makeText(v.getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
                             }
                         });
-
             }
         });
-
-
     }
 
 

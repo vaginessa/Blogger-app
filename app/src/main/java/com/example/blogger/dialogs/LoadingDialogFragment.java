@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
+
 
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.blogger.R;
+
+import java.util.Objects;
 
 public class LoadingDialogFragment extends DialogFragment {
 
@@ -37,7 +39,7 @@ public class LoadingDialogFragment extends DialogFragment {
         super.onStart();
 
         //set dialog width and height
-        getDialog()
+        Objects.requireNonNull(getDialog())
                 .getWindow()
                 .setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 

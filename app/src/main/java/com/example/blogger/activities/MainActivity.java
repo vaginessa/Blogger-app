@@ -1,22 +1,13 @@
 package com.example.blogger.activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.FragmentManager;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,35 +19,20 @@ import com.example.blogger.dialogs.AddPostDialogFragment;
 import com.example.blogger.dialogs.LoadingDialogFragment;
 import com.example.blogger.dialogs.ProfileDialogFragment;
 import com.example.blogger.models.PostsModel;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-import java.util.function.Predicate;
 
 public class MainActivity extends AppCompatActivity {
 
-    private android.widget.Toolbar toolbar;
     private FloatingActionButton new_post, logout_button;
     private ImageView close_icon, profile_icon;
     private TextView appbar_title;
@@ -100,6 +76,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        if (FirebaseAuth.getInstance().getCurrentUser()!=null)
+        {
+            Toast.makeText(getApplicationContext(),FirebaseAuth.getInstance().getCurrentUser().getEmail(),Toast.LENGTH_LONG).show();
+        }
         //get all the posts
         getAllPosts();
     }
@@ -112,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
         //set the appbar title
         //appbar_title.setText("Posts");
-        toolbar = findViewById(R.id.my_toolbar);
+        android.widget.Toolbar toolbar = findViewById(R.id.my_toolbar);
 
     }
 
@@ -121,21 +101,7 @@ public class MainActivity extends AppCompatActivity {
         final LoadingDialogFragment loadingDialogFragment = new LoadingDialogFragment();
         loadingDialogFragment.setCancelable(false);
         //Objects.requireNonNull(loadingDialogFragment.getDialog()).getWindow().setGravity(Gravity.CENTER);
-        loadingDialogFragment.show(getSupportFragmentManager().beginTransaction(), "Loading");
-
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(5000);
-                    loadingDialogFragment.dismiss();
-                }catch (Exception e)
-                {
-                    Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-        thread.start();
+        //loadingDialogFragment.show(getSupportFragmentManager().beginTransaction(), "Loading");
 
         list = new ArrayList<>();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -145,23 +111,24 @@ public class MainActivity extends AppCompatActivity {
             String currentDate = new SimpleDateFormat("dd/MMM/yyyy", Locale.getDefault()).format(new Date());
             String currentTime = new SimpleDateFormat("HH:mm:ss aa", Locale.getDefault()).format(new Date());
 
-            /*for (int i = 0 ; i < 20 ; i++)
+            for (int i = 0 ; i < 20 ; i++)
             {
                 PostsModel posts = new PostsModel();
 
                 posts.setAuthor("thor ragnor");
-                posts.setKey(null);
+                posts.setId(null);
                 posts.setUser_id(null);
                 posts.setTimeStamp(currentDate+" "+currentTime);
                 posts.setDesc("this is a test for the posts description");
                 posts.setUrl(null);
 
                 list.add(posts);
+            }
+            adapter = new PostsAdapter(getApplicationContext(), list);
+            recyclerView.setAdapter(adapter);
 
-            }*/
 
-
-            FirebaseFirestore
+           /* FirebaseFirestore
                     .getInstance()
                     .collection("Feeds")
                     .get()
@@ -178,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                                 recyclerView.setAdapter(adapter);
                             }
                         }
-                    });
+                    });*/
 
 
             String time = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(new Date());
@@ -213,12 +180,28 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                final LoadingDialogFragment dialogFragment =  new LoadingDialogFragment("Loading...");
+                dialogFragment.setCancelable(false);
+                dialogFragment.show(getSupportFragmentManager().beginTransaction(), "PROFILE DIALOG");
+
                 try
                 {
-                    ProfileDialogFragment profileDialogFragment = new ProfileDialogFragment();
-                    profileDialogFragment.show(getSupportFragmentManager().beginTransaction(), "profile");
-                    /*startActivity(new Intent(getApplicationContext() ,ProfileActivity.class));
-                    finish();*/
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(3000);
+                                dialogFragment.dismiss();
+
+                                ProfileDialogFragment profileDialogFragment = new ProfileDialogFragment();
+                                profileDialogFragment.show(getSupportFragmentManager().beginTransaction(), "profile");
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    thread.start();
+
                 }catch (Exception e)
                 {
                     Toast.makeText(getApplicationContext(),""+e.getMessage(),Toast.LENGTH_LONG).show();

@@ -15,9 +15,6 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class SplashScreen extends AppCompatActivity {
 
-    private TextView bloggerTitle;
-    private LoadingDialogFragment loadingDialogFragment;
-
     //for animation opacity
     float v = 0;
 
@@ -32,7 +29,7 @@ public class SplashScreen extends AppCompatActivity {
 
     private void initComponents()
     {
-        bloggerTitle = findViewById(R.id.splash_blogger_text);
+        TextView bloggerTitle = findViewById(R.id.splash_blogger_text);
 
         //animate the splash app name text
         bloggerTitle.setTranslationY(300);
@@ -49,10 +46,10 @@ public class SplashScreen extends AppCompatActivity {
         super.onStart();
 
         final FirebaseUser user =  FirebaseAuth.getInstance().getCurrentUser();
-        String userId = FirebaseAuth.getInstance().getUid();
+        final String userId = FirebaseAuth.getInstance().getUid();
 
         try {
-            loadingDialogFragment = new LoadingDialogFragment();
+            LoadingDialogFragment loadingDialogFragment = new LoadingDialogFragment();
             loadingDialogFragment.show(getSupportFragmentManager().beginTransaction(), "loading");
 
             Thread thread = new Thread(new Runnable() {
