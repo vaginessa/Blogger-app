@@ -1,5 +1,7 @@
 package com.example.blogger.activities;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -7,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.FragmentManager;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -24,6 +27,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,32 +46,17 @@ public class MainActivity extends AppCompatActivity {
     private TextView appbar_title;
 
     private FirebaseUser user;
-    /*---firebase assignment--*/
-    private DatabaseReference reference;
-    //private DatabaseReference getPostsReference;
-
-    private RecyclerView recyclerView;
-    List<PostsModel> list;
-    PostsAdapter adapter;
-    Context context;
-    FragmentManager fm = getFragmentManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        reference = FirebaseDatabase.getInstance().getReference().child("Blog");
+        /*---firebase assignment--*/
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Blog");
 
         new_post = findViewById(R.id.fab_new_post);
         //logout_button = (FloatingActionButton)findViewById(R.id.fab_logout);
-        recyclerView = findViewById(R.id.posts_rv);
-        recyclerView.setHasFixedSize(true);
-
-        /*recyclerView.setLayoutManager( new LinearLayoutManager(this));
-
-        list = new ArrayList<>();*/
-
 
         //call methods
         initAppbarComponents();
@@ -98,20 +91,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void getAllPosts()
     {
-        final LoadingDialogFragment loadingDialogFragment = new LoadingDialogFragment();
-        loadingDialogFragment.setCancelable(false);
-        //Objects.requireNonNull(loadingDialogFragment.getDialog()).getWindow().setGravity(Gravity.CENTER);
-        //loadingDialogFragment.show(getSupportFragmentManager().beginTransaction(), "Loading");
-
-        list = new ArrayList<>();
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.posts_rv);
+        final ArrayList<PostsModel> list = new ArrayList<PostsModel>();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        final PostsAdapter adapter = new PostsAdapter( this,list);
+        recyclerView.setAdapter(adapter);
 
         try
         {
             String currentDate = new SimpleDateFormat("dd/MMM/yyyy", Locale.getDefault()).format(new Date());
             String currentTime = new SimpleDateFormat("HH:mm:ss aa", Locale.getDefault()).format(new Date());
 
-            for (int i = 0 ; i < 20 ; i++)
+            /*for (int i = 0 ; i < 20 ; i++)
             {
                 PostsModel posts = new PostsModel();
 
@@ -125,30 +116,35 @@ public class MainActivity extends AppCompatActivity {
                 list.add(posts);
             }
             adapter = new PostsAdapter(getApplicationContext(), list);
-            recyclerView.setAdapter(adapter);
+            recyclerView.setAdapter(adapter);*/
 
-
-           /* FirebaseFirestore
+            FirebaseFirestore
                     .getInstance()
-                    .collection("Feeds")
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    .collection("Posts")
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @RequiresApi(api = Build.VERSION_CODES.N)
                         @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot snapshot : Objects.requireNonNull(task.getResult()))
-                                {
-                                    PostsModel posts = snapshot.toObject(PostsModel.class);
-                                    list.add(posts);
+                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                            if (value != null) {
+                                for (final DocumentChange dc : value.getDocumentChanges()) {
+                                    switch (dc.getType()) {
+                                        case ADDED:
+                                            list.add(dc.getDocument().toObject(PostsModel.class));
+                                            adapter.notifyDataSetChanged();
+                                            break;
+                                        case MODIFIED:
+                                            list.set(dc.getOldIndex(), dc.getDocument().toObject(PostsModel.class));
+                                            adapter.notifyDataSetChanged();
+                                            break;
+                                        case REMOVED:
+                                            //to remove item
+                                            list.remove(dc.getOldIndex());
+                                            adapter.notifyDataSetChanged();
+                                    }
                                 }
-                                adapter = new PostsAdapter(getApplicationContext(), list);
-                                recyclerView.setAdapter(adapter);
                             }
                         }
-                    });*/
-
-
-            String time = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(new Date());
+                    });
 
         } catch (Exception e) {
             System.out.println(e.getMessage());

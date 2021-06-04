@@ -55,10 +55,15 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         holder.txtPostTime.setText(posts.getTimeStamp());
         holder.txtAuthor.setText(posts.getAuthor());
 
+        Glide.with(context)
+                .load(posts.getProfile_pic())
+                .into(holder.authorImage);
+
        /*Picasso.get()
-               .load(posts.getUrl())
-                .centerCrop(50)
+               .load(posts.getProfile_pic())
+                .centerCrop()
                 .into(holder.authorImage);*/
+
         RequestOptions placeholderOption = new RequestOptions();
 
         if (posts.getUrl() != null)

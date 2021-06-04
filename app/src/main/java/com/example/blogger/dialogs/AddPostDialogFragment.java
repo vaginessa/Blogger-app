@@ -1,5 +1,7 @@
 package com.example.blogger.dialogs;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -14,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.cazaea.sweetalert.SweetAlertDialog;
 import com.example.blogger.R;
 import com.example.blogger.models.PostsModel;
 import com.github.dhaval2404.imagepicker.ImagePicker;
@@ -113,7 +116,7 @@ public class AddPostDialogFragment extends DialogFragment {
                     input_message.setError("Type something");
                     return;
                 }
-                final String currentDate = new SimpleDateFormat("ddd/MMM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
+                final String currentDate = new SimpleDateFormat("dd/MMM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
                 //PostsModel posts = new PostsModel(null, null, null,null,input_message.getText().toString());
 
                 FirebaseDatabase
@@ -151,6 +154,12 @@ public class AddPostDialogFragment extends DialogFragment {
 
                                                     if (img_uri!=null)
                                                     {
+                                                        final SweetAlertDialog pDialog = new SweetAlertDialog(view.getContext(), SweetAlertDialog.PROGRESS_TYPE);
+                                                        pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                                                        pDialog.setTitleText("Loading");
+                                                        pDialog.setCancelable(false);
+                                                        pDialog.show();
+
                                                         FirebaseStorage.getInstance()
                                                                 .getReference()
                                                                 .child("Posts")
@@ -171,15 +180,34 @@ public class AddPostDialogFragment extends DialogFragment {
                                                                                                 .collection("Posts")
                                                                                                 .document(documentReference.getId())
                                                                                                 .update("url", uri.toString());
-                                                                                        //test text
-                                                                                        Toast.makeText(getContext(), "it gets here", Toast.LENGTH_SHORT).show();
                                                                                     }
                                                                                 });
                                                                     }
                                                                 }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                                             @Override
                                                             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                                                                Toast.makeText(getContext(), "successfully posted!", Toast.LENGTH_LONG).show();
+
+                                                                pDialog.dismissWithAnimation();
+
+                                                                SweetAlertDialog dlg = new SweetAlertDialog(view.getContext(), SweetAlertDialog.SUCCESS_TYPE);
+                                                                dlg.setTitleText("Success!!");
+                                                                dlg.setContentText("Successfully Posted");
+                                                                dlg.setConfirmText("OK");
+                                                                dlg.setCancelable(false);
+                                                                dlg.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                                    @Override
+                                                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                                        dismiss();
+                                                                        sweetAlertDialog.dismissWithAnimation();
+                                                                    }
+                                                                });
+                                                                dlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                                                    @Override
+                                                                    public void onDismiss(DialogInterface dialog) {
+                                                                        dismiss();
+                                                                    }
+                                                                });
+                                                                dlg.show();
                                                             }
                                                         });
                                                     }
@@ -198,6 +226,7 @@ public class AddPostDialogFragment extends DialogFragment {
                             }
                         });
             }
+
         });
     }
 
