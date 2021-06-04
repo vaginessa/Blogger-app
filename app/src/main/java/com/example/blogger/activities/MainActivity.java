@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.example.blogger.R;
 import com.example.blogger.adapters.PostsAdapter;
 import com.example.blogger.dialogs.AddPostDialogFragment;
+import com.example.blogger.dialogs.CommentsDialogFragment;
 import com.example.blogger.dialogs.LoadingDialogFragment;
 import com.example.blogger.dialogs.ProfileDialogFragment;
 import com.example.blogger.models.PostsModel;
@@ -52,11 +53,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*---firebase assignment--*/
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Blog");
-
         new_post = findViewById(R.id.fab_new_post);
-        //logout_button = (FloatingActionButton)findViewById(R.id.fab_logout);
 
         //call methods
         initAppbarComponents();
@@ -101,22 +98,6 @@ public class MainActivity extends AppCompatActivity {
         {
             String currentDate = new SimpleDateFormat("dd/MMM/yyyy", Locale.getDefault()).format(new Date());
             String currentTime = new SimpleDateFormat("HH:mm:ss aa", Locale.getDefault()).format(new Date());
-
-            /*for (int i = 0 ; i < 20 ; i++)
-            {
-                PostsModel posts = new PostsModel();
-
-                posts.setAuthor("thor ragnor");
-                posts.setId(null);
-                posts.setUser_id(null);
-                posts.setTimeStamp(currentDate+" "+currentTime);
-                posts.setDesc("this is a test for the posts description");
-                posts.setUrl(null);
-
-                list.add(posts);
-            }
-            adapter = new PostsAdapter(getApplicationContext(), list);
-            recyclerView.setAdapter(adapter);*/
 
             FirebaseFirestore
                     .getInstance()

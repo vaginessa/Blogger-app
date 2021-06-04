@@ -1,6 +1,7 @@
 package com.example.blogger.adapters;
 
 import android.annotation.SuppressLint;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatImageView;
+
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,11 +18,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.blogger.R;
-import com.example.blogger.dialogs.AddPostDialogFragment;
+
 import com.example.blogger.dialogs.CommentsDialogFragment;
 import com.example.blogger.models.PostsModel;
 import com.google.android.material.textview.MaterialTextView;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -31,10 +31,14 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
 
     private final List<PostsModel> postList;
     private final Context context;
+    private FragmentManager fm;
+    //private final CommentClickListener commentClickListener;
 
     public PostsAdapter(Context context,List<PostsModel> postsList) {
         this.postList = postsList;
         this.context = context;
+        //fm = fragmentTransaction;
+        //this.commentClickListener = commentClickListener;
     }
 
     @NonNull
@@ -93,7 +97,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         private final MaterialTextView txtAuthor;
         private final CircleImageView authorImage;
 
-        private ImageView comments_iv;
+        private final ImageView comments_iv;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -121,8 +125,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
                 {
                     //call the dialog to write post content on
                     Toast.makeText(v.getContext(), String.valueOf(pos), Toast.LENGTH_LONG).show();
-                    /*CommentsDialogFragment commentsDialogFragment = new CommentsDialogFragment();
-                    commentsDialogFragment.show(,"COMMENTS");*/
+
+                    /*CommentsDialogFragment dlg = new CommentsDialogFragment();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    dlg.show(ft, "Comments");*/
 
                 } catch (Exception e) {
                     e.printStackTrace();
