@@ -116,10 +116,13 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             if (v.getId() == comments_iv.getId()) {
 
                 int pos =  getAdapterPosition();
+
                 try
                 {
                     //call the dialog to write post content on
                     Toast.makeText(v.getContext(), String.valueOf(pos), Toast.LENGTH_LONG).show();
+                    /*CommentsDialogFragment commentsDialogFragment = new CommentsDialogFragment();
+                    commentsDialogFragment.show(,"COMMENTS");*/
 
                 } catch (Exception e) {
                     e.printStackTrace();

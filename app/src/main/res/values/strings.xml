@@ -40,4 +40,6 @@
     <string name="profile_logout_text">logout</string>
     <string name="profile_update_text">update</string>
     <string name="profile_successful_text">update was successfully!</string>
+    <string name="comment_here_text">comment here</string>
+    <string name="comment_time_text">20:00</string>
 </resources>

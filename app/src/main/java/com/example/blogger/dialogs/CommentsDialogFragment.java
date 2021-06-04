@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import com.example.blogger.R;
 import com.google.android.material.appbar.MaterialToolbar;
 
+import java.util.Objects;
+
 
 public class CommentsDialogFragment extends DialogFragment {
 
@@ -40,10 +42,10 @@ public class CommentsDialogFragment extends DialogFragment {
         super.onStart();
 
         //set dialog width and height
-        getDialog()
+        Objects.requireNonNull(getDialog())
                 .getWindow()
                 .setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT);
+                        ViewGroup.LayoutParams.MATCH_PARENT);
     }
 
     @Override
