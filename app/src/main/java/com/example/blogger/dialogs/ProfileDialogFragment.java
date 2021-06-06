@@ -18,6 +18,7 @@ import com.example.blogger.activities.SigninActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -26,6 +27,7 @@ import java.util.Objects;
 public class ProfileDialogFragment extends DialogFragment {
 
     private MaterialToolbar toolbar;
+    private TextInputEditText name_txt, surname_txt, email_txt;
     private MaterialButton logout_btn, update_btn;
 
     public ProfileDialogFragment() {
@@ -72,6 +74,11 @@ public class ProfileDialogFragment extends DialogFragment {
     private void init(ViewGroup view)
     {
         toolbar = view.findViewById(R.id.tool_bar);
+
+        name_txt = view.findViewById(R.id.profile_name_et);
+        surname_txt = view.findViewById(R.id.profile_surname_et);
+        email_txt = view.findViewById(R.id.profile_email_et);
+
         logout_btn = view.findViewById(R.id.close_btn);
         update_btn = view.findViewById(R.id.update_btn);
     }

@@ -9,31 +9,98 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="280dp"
         android:id="@+id/app_bar">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/tool_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/splash_blogger_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/splash_blogger_text"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:fontFamily="@font/batman"
+            android:textColor="@color/white"
+            android:textSize="40sp"
+            android:gravity="center_horizontal"
+            android:layout_centerInParent="true" />
+
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                >
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profileImage"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@drawable/ic_account_circle_black_24dp"
+                    app:civ_border_width="1dp"
+                    app:civ_border_color="@color/dodger_blue"/>
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/addImg_fab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:ignore="ContentDescription"
+                    android:src="@drawable/ic_add"
+                    app:layout_anchor="@id/profileImage"
+                    app:layout_anchorGravity="end|bottom"
+                    app:backgroundTint="@color/white"/>
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/profile_img"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:src="@drawable/ic_account_circle_black_24dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/app_bar"/>
-
-    <com.google.android.material.card.MaterialCardView
+    <!--start of the edit text-->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true">
+        android:layout_marginTop="50dp"
+        android:orientation="vertical"
+        android:layout_below="@id/app_bar"
+        android:padding="10dp"
+        android:layout_centerVertical="true">
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-    </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/profile_name_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="first name"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/profile_surname_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="last name"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/profile_email_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="email"/>
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
