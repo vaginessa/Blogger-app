@@ -40,7 +40,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PostsAdapter.ClickListener {
 
     private FloatingActionButton new_post, logout_button;
     private ImageView close_icon, profile_icon;
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.posts_rv);
         final ArrayList<PostsModel> list = new ArrayList<PostsModel>();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        final PostsAdapter adapter = new PostsAdapter( this,list);
+        final PostsAdapter adapter = new PostsAdapter( this,list,this);
         recyclerView.setAdapter(adapter);
 
         try
@@ -190,5 +190,18 @@ public class MainActivity extends AppCompatActivity {
     private void logoutUser()
     {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    }
+
+    @Override
+    public void clickedLikes(int pos) {
+        Toast.makeText(getApplicationContext(), String.valueOf(pos), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void clickedComments(int pos) {
+        Toast.makeText(getApplicationContext(), String.valueOf(pos), Toast.LENGTH_LONG).show();
+
+        CommentsDialogFragment dialogFragment = new CommentsDialogFragment();
+        dialogFragment.show(getSupportFragmentManager().beginTransaction(), "COMMENTS");
     }
 }

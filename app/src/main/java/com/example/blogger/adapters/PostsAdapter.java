@@ -28,19 +28,17 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import interfaces.PostClickListener;
 
-public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> implements PostClickListener {
+public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
 
-    PostClickListener listener;
     private final List<PostsModel> postList;
     private final Context context;
     private FragmentManager fm;
-    //private final CommentClickListener commentClickListener;
+    private ClickListener listener1;
 
-    public PostsAdapter(Context context,List<PostsModel> postsList) {
+    public PostsAdapter(Context context,List<PostsModel> postsList, ClickListener listener1) {
         this.postList = postsList;
         this.context = context;
-        //fm = fragmentTransaction;
-        //this.commentClickListener = commentClickListener;
+        this.listener1 = listener1;
     }
 
     @NonNull
@@ -92,21 +90,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
 
     View mView;
 
-    @Override
-    public void clickedLikes() {
-        CommentsDialogFragment dlg = new CommentsDialogFragment();
-                    FragmentTransaction ft = fm.beginTransaction();
-                    dlg.show(ft, "Comments");
-    }
-
-    @Override
-    public void clickedComments() {
-
-        CommentsDialogFragment dlg = new CommentsDialogFragment();
-        FragmentTransaction ft = fm.beginTransaction();
-        dlg.show(ft, "Comments");
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final MaterialTextView txtDescription;
@@ -116,6 +99,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         private final CircleImageView authorImage;
 
         private final ImageView comments_iv;
+        private ImageView blog_like_iv;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -127,32 +111,31 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             txtAuthor = itemView.findViewById(R.id.postUsername);
             authorImage = itemView.findViewById(R.id.postProfilePic);
 
+            blog_like_iv = itemView.findViewById(R.id.blog_like);
             comments_iv = itemView.findViewById(R.id.blog_comment);
 
             comments_iv.setOnClickListener(this);
+            blog_like_iv.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-
+            int pos =  getAdapterPosition();
             if (v.getId() == comments_iv.getId()) {
-
-                int pos =  getAdapterPosition();
-
-                try
-                {
-                    //call the dialog to write post content on
-                    Toast.makeText(v.getContext(), String.valueOf(pos), Toast.LENGTH_LONG).show();
-
-                    /*CommentsDialogFragment dlg = new CommentsDialogFragment();
-                    FragmentTransaction ft = fm.beginTransaction();
-                    dlg.show(ft, "Comments");*/
-                listener.clickedLikes();
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                //call the dialog to write post content on
+                    listener1.clickedComments(pos);
             }
+            if (v.getId()==blog_like_iv.getId())
+            {
+                listener1.clickedLikes(pos);
+            }
+
         }
+    }
+
+    public interface ClickListener
+    {
+        void clickedLikes(int pos);
+        void clickedComments(int pos);
     }
 }

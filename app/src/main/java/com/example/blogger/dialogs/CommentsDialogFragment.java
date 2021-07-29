@@ -64,7 +64,7 @@ public class CommentsDialogFragment extends DialogFragment {
     private void init(View view)
     {
         comments_tool_bar = view.findViewById(R.id.comments_tool_bar);
-        comments_tool_bar = view.findViewById(R.id.comments_rv);
+        //comments_tool_bar = view.findViewById(R.id.comments_rv);
     }
 
     private void setUpToolBar(View view)
