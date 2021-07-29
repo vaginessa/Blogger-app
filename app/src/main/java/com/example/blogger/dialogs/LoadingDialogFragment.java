@@ -46,7 +46,7 @@ public class LoadingDialogFragment extends DialogFragment {
         //set the dialog gravity
         getDialog()
                 .getWindow()
-                .setGravity(Gravity.BOTTOM);
+                .setGravity(Gravity.CENTER);
     }
 
     Context context;

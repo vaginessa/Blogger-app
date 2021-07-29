@@ -49,24 +49,21 @@ public class SplashScreen extends AppCompatActivity {
         final String userId = FirebaseAuth.getInstance().getUid();
 
         try {
-            LoadingDialogFragment loadingDialogFragment = new LoadingDialogFragment();
-            loadingDialogFragment.show(getSupportFragmentManager().beginTransaction(), "loading");
+            /*LoadingDialogFragment loadingDialogFragment = new LoadingDialogFragment();
+            loadingDialogFragment.show(getSupportFragmentManager().beginTransaction(), "loading");*/
 
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try
-                    {
-                        Thread.sleep(3000);
-                        if (user != null) {
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        }else {
-                            startActivity(new Intent(getApplicationContext(),SigninActivity.class));
-                        }
-                        finish();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+            Thread thread = new Thread(() -> {
+                try
+                {
+                    Thread.sleep(3000);
+                    if (user != null) {
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    }else {
+                        startActivity(new Intent(getApplicationContext(),SigninActivity.class));
                     }
+                    finish();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             });
             thread.start();

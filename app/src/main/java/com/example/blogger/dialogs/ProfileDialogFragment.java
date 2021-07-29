@@ -1,9 +1,12 @@
 package com.example.blogger.dialogs;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import android.os.Handler;
@@ -12,22 +15,34 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.blogger.R;
 import com.example.blogger.activities.MainActivity;
 import com.example.blogger.activities.SigninActivity;
+import com.example.blogger.models.UserModel;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class ProfileDialogFragment extends DialogFragment {
 
+    private Context context;
     private MaterialToolbar toolbar;
     private TextInputEditText name_txt, surname_txt, email_txt;
+    private CircleImageView profileCircleView;
     private MaterialButton logout_btn, update_btn;
 
     public ProfileDialogFragment() {
@@ -67,6 +82,7 @@ public class ProfileDialogFragment extends DialogFragment {
         init(view);
         myToolbar(view);
         dialogControls(view);
+        getUserDetails(view);
 
         return view;
     }
@@ -74,6 +90,8 @@ public class ProfileDialogFragment extends DialogFragment {
     private void init(ViewGroup view)
     {
         toolbar = view.findViewById(R.id.tool_bar);
+
+        profileCircleView = view.findViewById(R.id.profileImage);
 
         name_txt = view.findViewById(R.id.profile_name_et);
         surname_txt = view.findViewById(R.id.profile_surname_et);
@@ -94,6 +112,63 @@ public class ProfileDialogFragment extends DialogFragment {
                 dismiss();
             }
         });
+    }
+
+    private void getUserDetails(ViewGroup view)
+    {
+        FirebaseDatabase
+                .getInstance()
+                .getReference("Blog")
+                .child("Users")
+                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @SuppressLint("CheckResult")
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists())
+                        {
+                            String username = Objects.requireNonNull(snapshot.child("name").getValue()).toString();
+                            String profile = Objects.requireNonNull(snapshot.child("profile").getValue()).toString();
+                            String surname = Objects.requireNonNull(snapshot.child("surname").getValue()).toString();
+                            String email = Objects.requireNonNull(snapshot.child("email").getValue()).toString();
+
+                            UserModel user = new UserModel();
+                            RequestOptions placeholderOption = new RequestOptions();
+                            if (user.getProfile() !=null)
+                            {
+                               /* Glide.with(Objects.requireNonNull(getContext()))
+                                        .applyDefaultRequestOptions(placeholderOption)
+                                        .load(profile)
+                                        .into(profileCircleView);*/
+                                try
+                                {
+                                    Picasso
+                                            .get()
+                                            .load(profile)
+                                            .into(profileCircleView);
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }else
+                            {
+                                placeholderOption.placeholder(R.drawable.ic_account_circle_black_24dp);
+                            }
+
+                            name_txt.setText(username);
+                            surname_txt.setText(surname);
+                            email_txt.setText(email);
+
+                        }else
+                        {
+                            Toast.makeText(getContext(), "No user info exists!", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 
     private void dialogControls(ViewGroup view)

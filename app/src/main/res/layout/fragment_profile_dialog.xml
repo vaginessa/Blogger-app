@@ -7,10 +7,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".dialogs.ProfileDialogFragment">
 
+    <!--start of the edit text-->
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="280dp"
-        android:id="@+id/app_bar">
+        android:layout_height="280dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/tool_bar"
@@ -21,41 +22,37 @@
             android:id="@+id/splash_blogger_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/batman"
+            android:gravity="center_horizontal"
             android:text="@string/splash_blogger_text"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:fontFamily="@font/batman"
             android:textColor="@color/white"
-            android:textSize="40sp"
-            android:gravity="center_horizontal"
-            android:layout_centerInParent="true" />
+            android:textSize="40sp" />
 
-            <androidx.coordinatorlayout.widget.CoordinatorLayout
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profileImage"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/ic_account_circle_black_24dp" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/addImg_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                >
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/profileImage"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:src="@drawable/ic_account_circle_black_24dp"
-                    app:civ_border_width="1dp"
-                    app:civ_border_color="@color/dodger_blue"/>
-
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/addImg_fab"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:ignore="ContentDescription"
-                    android:src="@drawable/ic_add"
-                    app:layout_anchor="@id/profileImage"
-                    app:layout_anchorGravity="end|bottom"
-                    app:backgroundTint="@color/white"/>
-            </androidx.coordinatorlayout.widget.CoordinatorLayout>
+                android:src="@drawable/ic_add"
+                app:backgroundTint="@color/white"
+                app:layout_anchor="@id/profileImage"
+                app:layout_anchorGravity="end|bottom"
+                tools:ignore="ContentDescription" />
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!--start of the edit text-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -74,7 +71,8 @@
                 android:id="@+id/profile_name_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="first name"/>
+                android:hint="first name"
+                tools:ignore="HardcodedText" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -86,7 +84,8 @@
                 android:id="@+id/profile_surname_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="last name"/>
+                android:hint="last name"
+                tools:ignore="HardcodedText" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -98,7 +97,8 @@
                 android:id="@+id/profile_email_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="email"/>
+                android:hint="email"
+                tools:ignore="HardcodedText" />
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
@@ -108,23 +108,27 @@
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         tools:ignore="UselessLeaf"
-        android:gravity="center">
+        android:weightSum="2">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/close_btn"
-            android:layout_width="150dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/profile_logout_text"
             app:strokeColor="@color/light_slate_gray"
             />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/update_btn"
-            android:layout_width="150dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/profile_update_text"
             android:layout_marginStart="10dp"
+            android:layout_weight="1"
             />
     </LinearLayout>
 

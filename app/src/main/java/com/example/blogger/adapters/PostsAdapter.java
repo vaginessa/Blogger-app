@@ -26,9 +26,11 @@ import com.google.android.material.textview.MaterialTextView;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import interfaces.PostClickListener;
 
-public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
+public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> implements PostClickListener {
 
+    PostClickListener listener;
     private final List<PostsModel> postList;
     private final Context context;
     private FragmentManager fm;
@@ -89,6 +91,22 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
     }
 
     View mView;
+
+    @Override
+    public void clickedLikes() {
+        CommentsDialogFragment dlg = new CommentsDialogFragment();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    dlg.show(ft, "Comments");
+    }
+
+    @Override
+    public void clickedComments() {
+
+        CommentsDialogFragment dlg = new CommentsDialogFragment();
+        FragmentTransaction ft = fm.beginTransaction();
+        dlg.show(ft, "Comments");
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final MaterialTextView txtDescription;
@@ -129,6 +147,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
                     /*CommentsDialogFragment dlg = new CommentsDialogFragment();
                     FragmentTransaction ft = fm.beginTransaction();
                     dlg.show(ft, "Comments");*/
+                listener.clickedLikes();
 
                 } catch (Exception e) {
                     e.printStackTrace();
