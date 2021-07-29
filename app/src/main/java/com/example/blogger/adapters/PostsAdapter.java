@@ -33,7 +33,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
     private final List<PostsModel> postList;
     private final Context context;
     private FragmentManager fm;
-    private ClickListener listener1;
+    private final ClickListener listener1;
 
     public PostsAdapter(Context context,List<PostsModel> postsList, ClickListener listener1) {
         this.postList = postsList;
@@ -62,11 +62,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         Glide.with(context)
                 .load(posts.getProfile_pic())
                 .into(holder.authorImage);
-
-       /*Picasso.get()
-               .load(posts.getProfile_pic())
-                .centerCrop()
-                .into(holder.authorImage);*/
 
         RequestOptions placeholderOption = new RequestOptions();
 

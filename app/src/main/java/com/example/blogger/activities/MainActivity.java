@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements PostsAdapter.Clic
 
     @Override
     public void clickedLikes(int pos) {
-        Toast.makeText(getApplicationContext(), String.valueOf(pos), Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Liked "+String.valueOf(pos), Toast.LENGTH_LONG).show();
     }
 
     @Override

@@ -1,6 +1,6 @@
 package interfaces;
 
 public interface PostClickListener {
-    void clickedLikes();
-    void clickedComments();
+    void clickedLikes(int position);
+    void clickedComments(int position);
 }
