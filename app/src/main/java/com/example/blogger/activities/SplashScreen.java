@@ -49,9 +49,6 @@ public class SplashScreen extends AppCompatActivity {
         final String userId = FirebaseAuth.getInstance().getUid();
 
         try {
-            /*LoadingDialogFragment loadingDialogFragment = new LoadingDialogFragment();
-            loadingDialogFragment.show(getSupportFragmentManager().beginTransaction(), "loading");*/
-
             Thread thread = new Thread(() -> {
                 try
                 {
@@ -61,7 +58,6 @@ public class SplashScreen extends AppCompatActivity {
                     }else {
                         startActivity(new Intent(getApplicationContext(),SigninActivity.class));
                     }
-                    finish();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

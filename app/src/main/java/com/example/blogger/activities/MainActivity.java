@@ -1,5 +1,6 @@
 package com.example.blogger.activities;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -22,14 +23,22 @@ import com.example.blogger.dialogs.AddPostDialogFragment;
 import com.example.blogger.dialogs.CommentsDialogFragment;
 import com.example.blogger.dialogs.LoadingDialogFragment;
 import com.example.blogger.dialogs.ProfileDialogFragment;
+import com.example.blogger.models.LikesModel;
 import com.example.blogger.models.PostsModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -37,14 +46,18 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements PostsAdapter.ClickListener {
 
     private FloatingActionButton new_post, logout_button;
     private ImageView close_icon, profile_icon;
     private TextView appbar_title;
+    private final ArrayList<PostsModel> list = new ArrayList<>();
 
     private FirebaseUser user;
 
@@ -65,11 +78,6 @@ public class MainActivity extends AppCompatActivity implements PostsAdapter.Clic
     @Override
     protected void onStart() {
         super.onStart();
-
-        if (FirebaseAuth.getInstance().getCurrentUser()!=null)
-        {
-            Toast.makeText(getApplicationContext(),FirebaseAuth.getInstance().getCurrentUser().getEmail(),Toast.LENGTH_LONG).show();
-        }
         //get all the posts
         getAllPosts();
     }
@@ -78,18 +86,16 @@ public class MainActivity extends AppCompatActivity implements PostsAdapter.Clic
     {
         //close_icon = (ImageView)findViewById(R.id.icon_close);
         profile_icon = findViewById(R.id.icon_profile);
-        //appbar_title = (TextView)findViewById(R.id.appbar_title);
+        appbar_title = findViewById(R.id.appbar_title);
 
         //set the appbar title
-        //appbar_title.setText("Posts");
         android.widget.Toolbar toolbar = findViewById(R.id.my_toolbar);
 
     }
 
     private void getAllPosts()
     {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.posts_rv);
-        final ArrayList<PostsModel> list = new ArrayList<PostsModel>();
+        RecyclerView recyclerView = findViewById(R.id.posts_rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         final PostsAdapter adapter = new PostsAdapter( this,list,this);
         recyclerView.setAdapter(adapter);
@@ -155,33 +161,15 @@ public class MainActivity extends AppCompatActivity implements PostsAdapter.Clic
     {
         profile_icon.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-
-                final LoadingDialogFragment dialogFragment =  new LoadingDialogFragment("Loading...");
-                dialogFragment.setCancelable(false);
-                dialogFragment.show(getSupportFragmentManager().beginTransaction(), "PROFILE DIALOG");
-
+            public void onClick(View v)
+            {
                 try
                 {
-                    Thread thread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Thread.sleep(3000);
-                                dialogFragment.dismiss();
-
-                                ProfileDialogFragment profileDialogFragment = new ProfileDialogFragment();
-                                profileDialogFragment.show(getSupportFragmentManager().beginTransaction(), "profile");
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                    thread.start();
-
+                    ProfileDialogFragment profileDialogFragment = new ProfileDialogFragment();
+                    profileDialogFragment.show(getSupportFragmentManager().beginTransaction(), "profile");
                 }catch (Exception e)
                 {
-                    Toast.makeText(getApplicationContext(),""+e.getMessage(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -189,19 +177,15 @@ public class MainActivity extends AppCompatActivity implements PostsAdapter.Clic
 
     private void logoutUser()
     {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    }
-
-    @Override
-    public void clickedLikes(int pos) {
-        Toast.makeText(getApplicationContext(), "Liked "+String.valueOf(pos), Toast.LENGTH_LONG).show();
+        final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
     }
 
     @Override
     public void clickedComments(int pos) {
-        Toast.makeText(getApplicationContext(), String.valueOf(pos), Toast.LENGTH_LONG).show();
 
-        CommentsDialogFragment dialogFragment = new CommentsDialogFragment();
-        dialogFragment.show(getSupportFragmentManager().beginTransaction(), "COMMENTS");
+        PostsModel model = list.get(pos);
+
+        CommentsDialogFragment dialog = new CommentsDialogFragment(model.getId());
+        dialog.show(getSupportFragmentManager().beginTransaction(),"COMMENTS");
     }
 }
