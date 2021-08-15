@@ -12,8 +12,11 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +26,7 @@ import com.example.blogger.dialogs.AddPostDialogFragment;
 import com.example.blogger.dialogs.CommentsDialogFragment;
 import com.example.blogger.dialogs.LoadingDialogFragment;
 import com.example.blogger.dialogs.ProfileDialogFragment;
+import com.example.blogger.dialogs.statsDialogFragment;
 import com.example.blogger.models.LikesModel;
 import com.example.blogger.models.PostsModel;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -157,9 +161,38 @@ public class MainActivity extends AppCompatActivity implements PostsAdapter.Clic
         });
     }
 
+    public void showPopup(View v)
+    {
+        try {
+            PopupMenu popupMenu = new PopupMenu(MainActivity.this,v,Gravity.BOTTOM);
+            popupMenu.getMenuInflater().inflate(R.menu.pop_up_menu,popupMenu.getMenu());
+
+            popupMenu.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.profile:
+                        ProfileDialogFragment profileDialogFragment = new ProfileDialogFragment();
+                        profileDialogFragment.show(getSupportFragmentManager().beginTransaction(), "profile");
+                        break;
+                    case R.id.stats:
+                        statsDialogFragment g = new statsDialogFragment();
+                        g.show(getSupportFragmentManager().beginTransaction(),"STATS");
+                        break;
+                    case R.id.logout:
+
+                        break;
+                }
+                return true;
+            });
+            popupMenu.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void GoToProfile()
     {
-        profile_icon.setOnClickListener(new View.OnClickListener() {
+        /*profile_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
@@ -172,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements PostsAdapter.Clic
                     Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_LONG).show();
                 }
             }
-        });
+        });*/
     }
 
     private void logoutUser()

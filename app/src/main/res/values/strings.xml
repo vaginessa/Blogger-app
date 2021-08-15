@@ -17,8 +17,8 @@
     <string name="splash_blogger_text">Blogger</string>
     <string name="splash_version_text">Version 1.0.0 (2021)</string>
     <string name="splash_developer_text">Developed by whiz</string>
-    <string name="post_likes_text">120</string>
-    <string name="post_comments_text">150</string>
+    <string name="post_likes_text">0</string>
+    <string name="post_comments_text">0</string>
     <string name="close_image_text">imageview to logout the current loggedin user</string>
     <string name="profile_image_text">imageview to view current user profile</string>
     <!-- TODO: Remove or change this placeholder text -->

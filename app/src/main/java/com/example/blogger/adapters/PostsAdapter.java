@@ -212,6 +212,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
                             Toast.makeText(mView.getContext(), "liked", Toast.LENGTH_LONG).show();
                             imageView.setImageResource(R.drawable.ic_like_btn);
                             imageView.setTag("Liked");
+
                         } else {
                             FirebaseFirestore
                                     .getInstance()

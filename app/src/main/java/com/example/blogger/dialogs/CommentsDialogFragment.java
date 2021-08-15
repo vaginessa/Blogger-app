@@ -1,10 +1,13 @@
 package com.example.blogger.dialogs;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -104,7 +107,7 @@ public class CommentsDialogFragment extends DialogFragment {
         init(view);
         setUpToolBar(view);
         postComment(view);
-        //loadComments(view);
+        loadComments(view);
 
         return view;
     }
@@ -119,116 +122,83 @@ public class CommentsDialogFragment extends DialogFragment {
 
     private void setUpToolBar(View view)
     {
-        comments_tool_bar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //dismiss dialog
-                dismiss();
-            }
+        comments_tool_bar.setNavigationOnClickListener(v -> {
+            //dismiss dialog
+            dismiss();
+            view.getContext();
         });
     }
 
     private void postComment(final View view)
     {
-
         context = view.getContext();
 
         Items = new ArrayList<>();
 
-        comment_post_fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        comment_post_fab.setOnClickListener(v -> {
 
-                final Map<String, Object> commentsMap = new HashMap<>();
-                commentsMap.put("message", comment_et.getText().toString().trim());
-                commentsMap.put("user_id", firebaseAuth.getCurrentUser().getUid());
-                commentsMap.put("timestamp", FieldValue.serverTimestamp());
-                commentsMap.put("comment_id", comment_id);
+            final Map<String, Object> commentsMap = new HashMap<>();
+            commentsMap.put("message", comment_et.getText().toString().trim());
+            commentsMap.put("user_id", Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid());
+            commentsMap.put("timestamp", FieldValue.serverTimestamp());
+            commentsMap.put("comment_id", comment_id);
 
-                Toast.makeText(getActivity(), comment_id, Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), comment_id, Toast.LENGTH_LONG).show();
 
-                //another try here
-                FirebaseFirestore
-                        .getInstance()
-                        .collection("Posts/" + comment_id + "/Comments")
-                        .add(commentsMap)
-                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(final DocumentReference documentReference) {
+            //another try here
+            FirebaseFirestore
+                    .getInstance()
+                    .collection("Posts/" + comment_id + "/Comments")
+                    .add(commentsMap)
+                    .addOnSuccessListener(documentReference -> {
 
-                                Toast.makeText(getActivity(), "Comment successful!", Toast.LENGTH_LONG).show();
-                                //clear the edit text after it is posted
-                                comment_et.getText().clear();
-                                documentReference.update("comment_id", documentReference.getId());
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
-
-            }
+                        Toast.makeText(getActivity(), "Comment successful!", Toast.LENGTH_LONG).show();
+                        //clear the edit text after it is posted
+                        comment_et.getText().clear();
+                        documentReference.update("comment_id", documentReference.getId());
+                    }).addOnFailureListener(e ->
+                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show());
         });
 
     }
+
+    @SuppressLint("NotifyDataSetChanged")
     private void loadComments(View view)
     {
-        context = view.getContext();
-        //RecyclerView Firebase List
-        commentsList = new ArrayList<>();
-        commentAdapter = new CommentAdapter(commentsList);
+        RecyclerView recycler = view.findViewById(R.id.comments_rv);
+        final ArrayList<CommentModel> Items = new ArrayList<>();
+        recycler.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        final CommentAdapter adapter = new CommentAdapter(Items);
+        recycler.setAdapter(adapter);
 
-        comment_list.setHasFixedSize(true);
-        comment_list.setLayoutManager(new LinearLayoutManager(getActivity()));
-        comment_list.setAdapter(commentAdapter);
-
-        //.collection("Feeds/" + commentId + "/Comments")
-        Query query = firebaseFirestore
-                .collection("Posts/" + comment_id + "/Comments")
-                .orderBy("timestamp", Query.Direction.ASCENDING);
-
-        query.addSnapshotListener(Objects.requireNonNull(getActivity()), new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-
-                if(documentSnapshots != null){
-                    for (final DocumentChange dc : documentSnapshots.getDocumentChanges()){
-                        switch (dc.getType()) {
-                            case ADDED:
-                                try
-                                {
-                                    CommentModel mc = dc.getDocument().toObject(CommentModel.class);
-                                    commentsList.add(mc);
-                                    commentAdapter.notifyDataSetChanged();
-
-                                } catch (Exception exception) {
-                                    exception.printStackTrace();
-                                }
-                                break;
-                            case MODIFIED:
-                                break;
-                            case REMOVED:
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                    if(commentsList.removeIf(new Predicate<CommentModel>() {
-                                        @Override
-                                        public boolean test(CommentModel post) {
-                                            return post.getComment_id().contains(dc.getDocument().getId());
-                                        }
-                                    }))
-                                    {
-                                        //adapter.notifyDataSetChanged();
+        try {
+            FirebaseFirestore
+                    .getInstance()
+                    .collection("Posts/"+comment_id+"/Comments")
+                    .addSnapshotListener((value, error) -> {
+                        if(value != null){
+                            for (final DocumentChange dc : value.getDocumentChanges()){
+                                switch (dc.getType()) {
+                                    case ADDED:
+                                        Items.add(dc.getDocument().toObject(CommentModel.class));
+                                        adapter.notifyDataSetChanged();
                                         break;
-                                    }
+                                    case MODIFIED:
+                                        Items.set(dc.getOldIndex(), dc.getDocument().toObject(CommentModel.class));
+                                        adapter.notifyDataSetChanged();
+                                        break;
+                                    case REMOVED:
+                                        //to remove item
+                                        Items.remove(dc.getOldIndex());
+                                        adapter.notifyDataSetChanged();
                                 }
+                            }
                         }
-                    }
-                }else
-                {
-                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+                    });
 
+        }
+        catch (Exception ex){
+            Toast.makeText(view.getContext(), ex.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -3,9 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Android/Blogger/app/src/main/res/layout/blog_item_row.xml" value="0.25" />
+        <entry key="..\:/Android/Blogger/app/src/main/res/layout/activity_main.xml" value="0.18645833333333334" />
+        <entry key="..\:/Android/Blogger/app/src/main/res/layout/blog_item_row.xml" value="0.22" />
         <entry key="..\:/Android/Blogger/app/src/main/res/layout/fragment_comments_dialog.xml" value="0.18645833333333334" />
+        <entry key="..\:/Android/Blogger/app/src/main/res/layout/fragment_stats_dialog.xml" value="0.18645833333333334" />
         <entry key="..\:/Android/Blogger/app/src/main/res/layout/single_comment_row.xml" value="0.18645833333333334" />
+        <entry key="..\:/Android/Blogger/app/src/main/res/menu/pop_up_menu.xml" value="0.18645833333333334" />
       </map>
     </option>
   </component>

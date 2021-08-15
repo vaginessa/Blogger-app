@@ -11,12 +11,12 @@
         android:id="@+id/main_appbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
-        android:background="@color/white"
         android:elevation="4dp">
 
         <Toolbar
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:title="Posts"
             android:id="@+id/my_toolbar">
 
             <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -31,12 +31,12 @@
 
                         <ImageView
                             android:id="@+id/icon_profile"
-                            android:layout_width="60dp"
-                            android:layout_height="50dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
-                            app:srcCompat="@drawable/ic_account_circle_black_24dp"
-                            android:tint="@color/deep_sky_blue"
-                            tools:ignore="ContentDescription,UseAppTint" />
+                            app:srcCompat="@drawable/ic_more_vert"
+                            tools:ignore="ContentDescription,UseAppTint"
+                            android:onClick="showPopup"/>
 
                     </RelativeLayout>
             </androidx.coordinatorlayout.widget.CoordinatorLayout>
