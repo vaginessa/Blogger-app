@@ -34,9 +34,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
+                            android:onClick="showPopup"
                             app:srcCompat="@drawable/ic_more_vert"
                             tools:ignore="ContentDescription,UseAppTint"
-                            android:onClick="showPopup"/>
+                            app:tint="@color/black"/>
 
                     </RelativeLayout>
             </androidx.coordinatorlayout.widget.CoordinatorLayout>

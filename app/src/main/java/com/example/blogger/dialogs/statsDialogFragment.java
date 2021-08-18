@@ -1,49 +1,36 @@
 package com.example.blogger.dialogs;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.anychart.charts.Pie;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.blogger.R;
-import com.example.blogger.activities.SigninActivity;
-import com.example.blogger.models.UserModel;
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
-
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class statsDialogFragment extends DialogFragment {
 
     private MaterialToolbar toolbar;
+    private FirebaseAnalytics analytics;
 
     public statsDialogFragment() {
         // Required empty public constructor
@@ -58,6 +45,8 @@ public class statsDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        analytics = FirebaseAnalytics.getInstance(getContext());
     }
 
     @Override
@@ -80,6 +69,8 @@ public class statsDialogFragment extends DialogFragment {
         myToolbar(view);
         getGraphDetails(view);
 
+        //testWeatherAPI(view);
+
         return view;
     }
 
@@ -95,16 +86,45 @@ public class statsDialogFragment extends DialogFragment {
 
     private void getGraphDetails(ViewGroup view)
     {
-        Pie pie = AnyChart.pie();
+        FirebaseFirestore
+                .getInstance()
+                .collection("Posts")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
 
-        List<DataEntry> data = new ArrayList<>();
-        data.add(new ValueDataEntry("Users", 10000));
-        data.add(new ValueDataEntry("Posts", 12000));
-        data.add(new ValueDataEntry("Peter", 18000));
+                    int postNumber = queryDocumentSnapshots.size();
 
-        pie.data(data);
+                    Pie pie = AnyChart.pie();
+                    List<DataEntry> data = new ArrayList<>();
 
-        AnyChartView anyChartView = view.findViewById(R.id.any_chart_view);
-        anyChartView.setChart(pie);
+                    data.add(new ValueDataEntry("Users", 12000));
+                    data.add(new ValueDataEntry("Posts", postNumber*1000));
+                    data.add(new ValueDataEntry("Likes", 18000));
+
+                    pie.data(data);
+
+                    AnyChartView anyChartView = view.findViewById(R.id.any_chart_view);
+                    anyChartView.setChart(pie);
+                });
+    }
+
+    private void testWeatherAPI(View view) {
+
+        String url = "https://community-open-weather-map.p.rapidapi.com/find?q=london&cnt=0&mode=null&lon=0&type=link%2C%20accurate&lat=0&units=imperial%2C%20metric";
+        String appid = "5208ad76fbmsh721c0599cfed623p1c7795jsneb3a9fc123f2";
+
+        String tempUrl = url + "?q" + "polokwane" + "," + "south africa" + "&appid" + appid;
+
+        StringRequest request = new StringRequest(Request.Method.POST, tempUrl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                Toast.makeText(getContext(),response,Toast.LENGTH_LONG).show();
+            }
+        }, error ->
+                Toast.makeText(getContext(),error.getMessage(),Toast.LENGTH_LONG).show());
+
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        queue.add(request);
     }
 }

@@ -30,6 +30,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -73,13 +74,12 @@ public class SignupActivity extends AppCompatActivity {
         signuplinks();
         animateComponents();
         selectImage();
+        backToLoginPage();
 
         signup_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 CreateUserAccount(reg_imageUri);
-
             }
         });
     }
@@ -92,7 +92,7 @@ public class SignupActivity extends AppCompatActivity {
         password_txt = (TextInputLayout)findViewById(R.id.reg_password);
         confirmpassword_txt = (TextInputLayout)findViewById(R.id.reg_confirmpassword);
         //already an account textview
-        backToLogin_tv = (MaterialTextView) findViewById(R.id.link_login);
+        backToLogin_tv = findViewById(R.id.link_login);
         //profile imageview
         selectedImage = (CircleImageView)findViewById(R.id.reg_profile_image);
         //button
@@ -186,6 +186,13 @@ public class SignupActivity extends AppCompatActivity {
 
     }
 
+    private void backToLoginPage()
+    {
+        backToLogin_tv.setOnClickListener(v -> {
+            startActivity(new Intent(getApplicationContext(),SigninActivity.class));
+        });
+    }
+
     private void selectImage()
     {
         selectedImage.setOnClickListener(new View.OnClickListener() {
@@ -212,85 +219,86 @@ public class SignupActivity extends AppCompatActivity {
 
     private void CreateUserAccount(final Uri uri)
     {
-        //final String description_val = postDescr.getText().toString().trim();
-        final ProgressDialog progress = new ProgressDialog(SignupActivity.this);
-        progress.setMessage("Creating new user...please wait");
-        progress.setCancelable(false);
-
         String email_str = email_txt.getEditText().getText().toString().trim();
         String password_str = password_txt.getEditText().getText().toString().trim();
 
         auth.createUserWithEmailAndPassword(email_str, password_str)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
+                .addOnSuccessListener(authResult -> {
+                    final String name = name_txt.getEditText().getText().toString().trim();
+                    final String surname = surname_txt.getEditText().getText().toString().trim();
 
-                        final String email = email_txt.getEditText().getText().toString().trim();
-                        final String name = name_txt.getEditText().getText().toString().trim();
-                        final String surname = surname_txt.getEditText().getText().toString().trim();
+                    if (!(TextUtils.isEmpty(email_str) && TextUtils.isEmpty(name) && TextUtils.isEmpty(surname) && reg_imageUri !=null))
+                    {
+                        final StorageReference filepath = storageReference
+                                .child("Profile_images")
+                                .child(FirebaseAuth.getInstance().getUid())
+                                .child(System.currentTimeMillis()+"."+getFileExtention(uri));
 
-                        if (!(TextUtils.isEmpty(email) && TextUtils.isEmpty(name) && TextUtils.isEmpty(surname) && reg_imageUri !=null))
+                        filepath.putFile(uri)
+                                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>()
                         {
-                            progress.show();
-                            //get user id
-                            String userid = auth.getCurrentUser().getUid();
-                            final StorageReference filepath = storageReference.child("Profile_images").child(userid).child(System.currentTimeMillis()+"."+getFileExtention(uri));
-                            filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>()
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
                             {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
-                                {
 
-                                    filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+                                filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+                                {
+                                    @Override
+                                    public void onSuccess(Uri uri1)
                                     {
-                                        @Override
-                                        public void onSuccess(Uri uri)
+                                        try
                                         {
+                                            user = FirebaseAuth.getInstance().getCurrentUser();
+                                            String uid = user.getUid();
+
+                                            UserModel newuser = new UserModel();
+
+                                            newuser.setName(name);
+                                            newuser.setSurname(surname);
+                                            newuser.setEmail(email_str);
+                                            newuser.setProfile(uri1.toString());
+
                                             try
                                             {
-                                                //post id
-                                                String postId = reference.child("Users").push().getKey();
+                                                //reference.child("Users").child(uid).setValue(newuser);
+                                                FirebaseFirestore
+                                                        .getInstance()
+                                                        .collection("Users")
+                                                        .document(FirebaseAuth.getInstance().getUid())
+                                                        .set(newuser)
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void unused) {
+                                                                Toast.makeText(SignupActivity.this, "New user created Successfully", Toast.LENGTH_SHORT).show();
+                                                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                                                finish();
+                                                            }
+                                                        }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(getApplicationContext(),e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
 
-                                                user = FirebaseAuth.getInstance().getCurrentUser();
-                                                String uid = user.getUid();
-
-                                                UserModel newuser = new UserModel();
-
-                                                newuser.setName(name);
-                                                newuser.setSurname(surname);
-                                                newuser.setEmail(email);
-                                                newuser.setProfile(uri.toString());
-
-                                                try
-                                                {
-                                                    reference.child("Users").child(uid).setValue(newuser);
-                                                    progress.dismiss();
-
-                                                    Toast.makeText(SignupActivity.this, "New user created Successfully", Toast.LENGTH_SHORT).show();
-
-                                                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                                                    finish();
-
-                                                }catch(Exception e)
-                                                {
-                                                    Toast.makeText(SignupActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                }
-                                            } catch (Exception e) {
-                                                Toast.makeText(SignupActivity.this,""+e.getMessage(),Toast.LENGTH_LONG).show();
+                                            }catch(Exception e)
+                                            {
+                                                Toast.makeText(SignupActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                                             }
+                                        } catch (Exception e) {
+                                            Toast.makeText(SignupActivity.this,""+e.getMessage(),Toast.LENGTH_LONG).show();
                                         }
-                                    });
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getApplicationContext(),""+e.getMessage(),Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                        }
+                                    }
+                                });
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getApplicationContext(),""+e.getMessage(),Toast.LENGTH_SHORT).show();
+                            }
+                        });
 
                     }
+
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {

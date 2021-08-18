@@ -42,4 +42,7 @@
     <string name="profile_successful_text">update was successfully!</string>
     <string name="comment_here_text">comment here</string>
     <string name="comment_time_text">20:00</string>
+
+    <string name="logout_text">Are you sure you want to logout ?</string>
+    <string name="Logout_title">Logout</string>
 </resources>

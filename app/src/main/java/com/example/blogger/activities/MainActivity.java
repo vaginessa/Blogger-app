@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -33,6 +35,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -75,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements PostsAdapter.Clic
         //call methods
         initAppbarComponents();
         postActivity();
-        GoToProfile();
         //logoutUser();
     }
 
@@ -178,6 +180,37 @@ public class MainActivity extends AppCompatActivity implements PostsAdapter.Clic
                         g.show(getSupportFragmentManager().beginTransaction(),"STATS");
                         break;
                     case R.id.logout:
+                        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(MainActivity.this);
+                        builder.setMessage(R.string.logout_text);
+                        builder.setTitle(R.string.Logout_title);
+                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                FirebaseAuth.getInstance().signOut();
+
+                                LoadingDialogFragment loading = new LoadingDialogFragment("Loading");
+                                loading.show(getSupportFragmentManager().beginTransaction(),"Loading");
+
+                                Thread thread = new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            Thread.sleep(3000);
+                                            startActivity(new Intent(getApplicationContext(), SigninActivity.class));
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                                thread.start();
+                            }
+                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        builder.show();
 
                         break;
                 }
@@ -188,29 +221,6 @@ public class MainActivity extends AppCompatActivity implements PostsAdapter.Clic
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private void GoToProfile()
-    {
-        /*profile_icon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                try
-                {
-                    ProfileDialogFragment profileDialogFragment = new ProfileDialogFragment();
-                    profileDialogFragment.show(getSupportFragmentManager().beginTransaction(), "profile");
-                }catch (Exception e)
-                {
-                    Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_LONG).show();
-                }
-            }
-        });*/
-    }
-
-    private void logoutUser()
-    {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
     }
 
     @Override
